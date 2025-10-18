@@ -141,7 +141,7 @@ function Product() {
     }
     const fetchProduct = async () => {
       // const res = await axios.post(`${import.meta.env.VITE_LOCAL_PORT}/products`)
-      const res = await axios.get(`${import.meta.env.VITE_DEPLOY_PORT}/products/most-favourite`)
+      const res = await axios.post(`${import.meta.env.VITE_DEPLOY_PORT}/products`)
       setProducts(res.data.data)
     }
     fetchTopRating()
