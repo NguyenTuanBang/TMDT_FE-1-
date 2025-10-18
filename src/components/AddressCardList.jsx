@@ -1,8 +1,8 @@
 import { Card, CardHeader, CardBody, useDisclosure } from "@heroui/react";
-import useAdress from "../hooks/useAdress";
-import useToast from "../hooks/useToast";
-import ConfirmModal from "./ConfirmModal";
-import UpdateAddressModal from "./UpdateAddressModal";
+import useAdress from "../hooks/useAdress.jsx";
+import useToast from "../hooks/useToast.jsx";
+import ConfirmModal from "./ConfirmModal.jsx";
+import UpdateAddressModal from "./UpdateAddressModal.jsx";
 import { useState } from "react";
 
 export default function AdressCardList() {

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import useAuth from "../hooks/useAuth";
-import useToast from "../hooks/useToast";
+import useAuth from "../hooks/useAuth.jsx";
+import useToast from "../hooks/useToast.jsx";
 
 const MeDropDown = () => {
   const { user, logout } = useAuth();

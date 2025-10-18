@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import ReviewForm from "./ReviewForm";
-import ReviewOverview from "./ReviewOverview";
-import api from "../utils/api";
+import ReviewForm from "./ReviewForm.jsx";
+import ReviewOverview from "./ReviewOverview.jsx";
+import api from "../utils/api.jsx";
 import { FaStar } from "react-icons/fa";
 
 function ReviewSection() {

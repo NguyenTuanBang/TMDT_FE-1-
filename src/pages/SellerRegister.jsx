@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import useToast from "../hooks/useToast";
-import useAuth from "../hooks/useAuth";
-import CustomModal from "./Modal";
-import CustomSelect from "./CustomSelect";
+import useToast from "../hooks/useToast.jsx";
+import useAuth from "../hooks/useAuth.jsx";
+import CustomModal from "./Modal.jsx";
+import CustomSelect from "./CustomSelect.jsx";
 import { Input, Button } from "@heroui/react";
 import axios from "axios";
-import api from "../utils/api";
+import api from "../utils/api.jsx";
 
 export default function SellerRegister() {
   const { updateMe } = useAuth();

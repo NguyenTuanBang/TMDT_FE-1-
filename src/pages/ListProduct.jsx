@@ -3,9 +3,9 @@ import { Pagination, Button } from "antd";
 import axios from "axios";
 import { Link, useLocation } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/Navbar.jsx";
 // import FilterDropdown from "../components/FilterProduct";
-import FilterDrawer from "../components/FilterProduct";
+import FilterDrawer from "../components/FilterProduct.jsx";
 
 const ListProduct = () => {
   const location = useLocation();

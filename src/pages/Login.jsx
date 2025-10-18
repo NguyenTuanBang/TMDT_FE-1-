@@ -1,13 +1,13 @@
-import Input from "../components/Input";
-import FadeContent from "../components/FadeContent";
+import Input from "../components/Input.jsx";
+import FadeContent from "../components/FadeContent.jsx";
 import { useState } from "react";
-import useToast from "../hooks/useToast";
-import SpinnerLoad from "../components/Spinner";
+import useToast from "../hooks/useToast.jsx";
+import SpinnerLoad from "../components/Spinner.jsx";
 import { Checkbox } from "@heroui/checkbox";
 
 import { Link, useNavigate } from "react-router-dom";
-import { EyeFilledIcon, EyeSlashFilledIcon } from "../icons/icons";
-import useAuth from "../hooks/useAuth";
+import { EyeFilledIcon, EyeSlashFilledIcon } from "../icons/icons.jsx";
+import useAuth from "../hooks/useAuth.jsx";
 
 export default function Login() {
   const [isVisible, setIsVisible] = useState(false);

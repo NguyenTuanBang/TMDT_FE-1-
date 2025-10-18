@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { EyeSlashFilledIcon, EyeFilledIcon } from "../icons/icons";
+import { EyeSlashFilledIcon, EyeFilledIcon } from "../icons/icons.jsx";
 import { Input, Button } from "@heroui/react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import useAuth from "../hooks/useAuth";
-import useToast from "../hooks/useToast";
+import useAuth from "../hooks/useAuth.jsx";
+import useToast from "../hooks/useToast.jsx";
 
 const confirmSchema = Yup.object({
   currentPassword: Yup.string().required("Vui lòng nhập mật khẩu hiện tại"),

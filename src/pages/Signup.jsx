@@ -1,17 +1,17 @@
-import Input from "../components/Input";
-import FadeContent from "../components/FadeContent";
+import Input from "../components/Input.jsx";
+import FadeContent from "../components/FadeContent.jsx";
 import { useEffect, useState } from "react";
-import useToast from "../hooks/useToast";
-import SpinnerLoad from "../components/Spinner";
-import InputOTP from "../components/InputOTP";
-import CountdownTimer from "../components/CountDownTimer";
+import useToast from "../hooks/useToast.jsx";
+import SpinnerLoad from "../components/Spinner.jsx";
+import InputOTP from "../components/InputOTP.jsx";
+import CountdownTimer from "../components/CountDownTimer.jsx";
 import { Link, useNavigate } from "react-router-dom";
 import {
   EyeFilledIcon,
   EyeSlashFilledIcon,
   LeftArrowIcon,
-} from "../icons/icons";
-import useAuth from "../hooks/useAuth";
+} from "../icons/icons.jsx";
+import useAuth from "../hooks/useAuth.jsx";
 
 export default function Signup() {
   const [showResend, setShowResend] = useState(false);

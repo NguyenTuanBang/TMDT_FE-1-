@@ -1,13 +1,13 @@
 import { BellIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { Link, useNavigate } from "react-router-dom";
-import LanguageDropDown from "./LanguageDropDown";
-import useAuth from "../hooks/useAuth";
-import MeDropDown from "./MeDropDown";
+import LanguageDropDown from "./LanguageDropDown.jsx";
+import useAuth from "../hooks/useAuth.jsx";
+import MeDropDown from "./MeDropDown.jsx";
 import { useState } from "react";
 import { useEffect } from "react";
-import api from "../utils/api";
+import api from "../utils/api.jsx";
 import axios from "axios";
-import { useCartCount } from "../hooks/useCartCount";
+import { useCartCount } from "../hooks/useCartCount.jsx";
 
 function Navbar() {
   const { user } = useAuth();

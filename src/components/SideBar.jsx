@@ -8,7 +8,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
-import useAuth from "../hooks/useAuth";
+import useAuth from "../hooks/useAuth.jsx";
 
 export default function Sidebar() {
   const [open, setOpen] = useState("Tài Khoản của tôi");

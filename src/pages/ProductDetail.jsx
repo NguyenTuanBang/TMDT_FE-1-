@@ -1,12 +1,12 @@
 import { useState, useEffect, useMemo } from "react";
-import Navbar from "../components/Navbar";
-import ReviewSection from "../components/ReviewSection";
+import Navbar from "../components/Navbar.jsx";
+import ReviewSection from "../components/ReviewSection.jsx";
 import { FaStar, FaRegStar, FaStarHalfAlt } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
-import useAuth from "../hooks/useAuth";
-import useToast from "../hooks/useToast";
+import useAuth from "../hooks/useAuth.jsx";
+import useToast from "../hooks/useToast.jsx";
 import axios from "axios";
-import api from "../utils/api";
+import api from "../utils/api.jsx";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 function ProductDetail() {

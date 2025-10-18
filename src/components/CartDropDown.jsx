@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../utils/api";
+import api from "../utils/api.jsx";
 
 function CartDropdown({ store, onCartChange }) {
     const [isOpen, setIsOpen] = useState(true);

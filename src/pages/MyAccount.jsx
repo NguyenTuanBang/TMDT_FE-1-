@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
-import Sidebar from "../components/SideBar";
-import Navbar from "../components/Navbar";
+import Sidebar from "../components/SideBar.jsx";
+import Navbar from "../components/Navbar.jsx";
 
 function MyAccount() {
   return (

@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import Banner from "../components/ProductBanner";
-import ProductCard from "../components/ProductCard";
-import ProductCarousel from "../components/ProductCarousel";
-import Category from "./Category";
+import Navbar from "../components/Navbar.jsx";
+import Banner from "../components/ProductBanner.jsx";
+import ProductCard from "../components/ProductCard.jsx";
+import ProductCarousel from "../components/ProductCarousel.jsx";
+import Category from "./Category.jsx";
 import { useEffect, useState } from "react";
 import axios from "axios";
 

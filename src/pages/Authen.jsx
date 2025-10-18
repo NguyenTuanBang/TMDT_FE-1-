@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import TextType from "../components/TypeText";
+import TextType from "../components/TypeText.jsx";
 
 function Authen() {
   return (

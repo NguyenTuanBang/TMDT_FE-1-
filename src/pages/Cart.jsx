@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/Navbar.jsx";
 import { Button } from "@heroui/react";
-import api from "../utils/api";
-import CartDropdown from "../components/CartDropDown";
+import api from "../utils/api.jsx";
+import CartDropdown from "../components/CartDropDown.jsx";
 import { useNavigate } from "react-router-dom";
 
 function Cart() {

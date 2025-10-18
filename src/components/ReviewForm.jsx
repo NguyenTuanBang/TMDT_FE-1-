@@ -1,8 +1,8 @@
 import { useState, useRef } from "react";
 import { FaStar } from "react-icons/fa";
 
-import api from "../utils/api";
-import useToast from "../hooks/useToast";
+import api from "../utils/api.jsx";
+import useToast from "../hooks/useToast.jsx";
 
 function ReviewForm() {
   const [rating, setRating] = useState(0);

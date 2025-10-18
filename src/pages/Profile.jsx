@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import useToast from "../hooks/useToast";
-import useAuth from "../hooks/useAuth";
+import useToast from "../hooks/useToast.jsx";
+import useAuth from "../hooks/useAuth.jsx";
 
 export default function Profile() {
   const { user, updateMe } = useAuth();

@@ -1,18 +1,18 @@
-import Input from "../components/Input";
-import FadeContent from "../components/FadeContent";
+import Input from "../components/Input.jsx";
+import FadeContent from "../components/FadeContent.jsx";
 import { useEffect, useState } from "react";
-import api from "../utils/api";
-import useToast from "../hooks/useToast";
-import SpinnerLoad from "../components/Spinner";
-import InputOTP from "../components/InputOTP";
-import CountdownTimer from "../components/CountDownTimer";
+import api from "../utils/api.jsx";
+import useToast from "../hooks/useToast.jsx";
+import SpinnerLoad from "../components/Spinner.jsx";
+import InputOTP from "../components/InputOTP.jsx";
+import CountdownTimer from "../components/CountDownTimer.jsx";
 
 import { Link, useNavigate } from "react-router-dom";
 import {
   EyeFilledIcon,
   EyeSlashFilledIcon,
   LeftArrowIcon,
-} from "../icons/icons";
+} from "../icons/icons.jsx";
 
 export default function ForgotPassword() {
   const [isVisible, setIsVisible] = useState(false);

@@ -1,13 +1,13 @@
-import CustomModal from "./Modal";
-import CustomSelect from "./CustomSelect";
+import CustomModal from "./Modal.jsx";
+import CustomSelect from "./CustomSelect.jsx";
 import { useDisclosure, Button, Input } from "@heroui/react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useState } from "react";
 import axios from "axios";
-import useAddress from "../hooks/useAdress";
-import useToast from "../hooks/useToast";
-import AdressCardList from "../components/AddressCardList";
+import useAddress from "../hooks/useAdress.jsx";
+import useToast from "../hooks/useToast.jsx";
+import AdressCardList from "../components/AddressCardList.jsx";
 
 function Address() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();

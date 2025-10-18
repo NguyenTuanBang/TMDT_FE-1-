@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import ProductCard from "./ProductCard";
+import ProductCard from "./ProductCard.jsx";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
 

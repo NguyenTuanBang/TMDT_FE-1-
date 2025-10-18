@@ -9,11 +9,11 @@ import {
 } from "@heroui/react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import CustomSelect from "../pages/CustomSelect";
+import CustomSelect from "../pages/CustomSelect.jsx";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import useAddress from "../hooks/useAdress";
-import useToast from "../hooks/useToast";
+import useAddress from "../hooks/useAdress.jsx";
+import useToast from "../hooks/useToast.jsx";
 
 export default function UpdateAddressModal({ isOpen, onClose, initialData }) {
   const [provinces, setProvinces] = useState([]);
