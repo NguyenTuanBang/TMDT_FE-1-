@@ -16,7 +16,8 @@ const FilterDrawer = ({
     const fetchTags = async () => {
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_LOCAL_PORT}/allTags`
+          // `${import.meta.env.VITE_LOCAL_PORT}/allTags`
+          `${import.meta.env.VITE_DEPLOY_PORT}/allTags`
         );
         setTags(res.data.data || []);
       } catch (err) {

@@ -11,8 +11,8 @@ const Category = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_LOCAL_PORT}/sixTags`);
-        // const response = await axios.get(`${import.meta.env.VITE_DEPLOY_PORT}/fiveTags`);
+        // const response = await axios.get(`${import.meta.env.VITE_LOCAL_PORT}/sixTags`);
+        const response = await axios.get(`${import.meta.env.VITE_DEPLOY_PORT}/sixTags`);
         setCategories(response.data.data);
       } catch (error) {
         console.error("Error fetching categories:", error);

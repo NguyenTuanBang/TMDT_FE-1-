@@ -24,7 +24,8 @@ function ProductDetail() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await axios.get(`${import.meta.env.VITE_LOCAL_PORT}/products/${id}`);
+      // const res = await axios.get(`${import.meta.env.VITE_LOCAL_PORT}/products/${id}`);
+      const res = await axios.get(`${import.meta.env.VITE_DEPLOY_PORT}/products/${id}`);
       setProduct(res.data.data);
     };
     fetchData();
