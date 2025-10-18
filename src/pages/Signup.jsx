@@ -3,7 +3,7 @@ import FadeContent from "../components/FadeContent.jsx";
 import { useEffect, useState } from "react";
 import useToast from "../hooks/useToast.jsx";
 import SpinnerLoad from "../components/Spinner.jsx";
-import InputOTP from "../components/InputOTP.jsx";
+import InputOTP from "../components/InputOtp.jsx";
 import CountdownTimer from "../components/CountDownTimer.jsx";
 import { Link, useNavigate } from "react-router-dom";
 import {
