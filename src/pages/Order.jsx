@@ -45,7 +45,7 @@ const Order = () => {
   };
   useEffect(() => {
     if (chosenAddress && chosenAddress._id) fetchPreOrder();
-    fetchData();
+    
   }, [chosenAddress]);
 
   const chooseNewAddress = (id) => {
