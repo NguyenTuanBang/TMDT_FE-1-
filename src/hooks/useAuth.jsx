@@ -18,8 +18,10 @@ export default function useAuth() {
       const res = await api.post("/users/signup", data);
       return res.data;
     },
+    onError: (err) => {
+      console.error("Đăng ký thất bại:", err);
+    },
   });
-
   const resendOtp = useMutation({
     mutationFn: async (data) => {
       const res = await api.post("/users/resend-otp", data);
