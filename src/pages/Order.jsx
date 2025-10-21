@@ -13,7 +13,7 @@ import useAddress from "../hooks/useAdress.jsx";
 import useToast from "../hooks/useToast.jsx";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
+import {  useMutation, useQueryClient } from "@tanstack/react-query";
 
 const Order = () => {
   const user = useAuth();
@@ -22,6 +22,7 @@ const Order = () => {
   const [preOrder, setPreOrder] = useState({});
   const [isAddressDropdownOpen, setIsAddressDropdownOpen] = useState(false);
   const navigate = useNavigate()
+  const queryClient = useQueryClient();
 
   const fetchData = async () => {
     const res = await api.get("/users/me/address");
