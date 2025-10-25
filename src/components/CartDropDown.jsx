@@ -109,7 +109,7 @@ function CartDropdown({ store, onCartChange }) {
 
   const handleSelectPromotion = async (promo) => {
     try {
-      await api.post("/cart/add-promotion", { promotion_id: promo._id });
+      await api.post("/cart/add-promotion", { promotion_id: promo._id, cart_Id: store._id });
       setShowPromotionModal(false);
       console.log("Promotion applied:", promo);
       onCartChange()
