@@ -39,7 +39,7 @@ const MeDropDown = () => {
         className="gap-2 flex items-center px-3 py-2 rounded-lg text-white font-medium hover:bg-white/20 transition cursor-pointer"
       >
         <img
-          src= {user.avatar}
+          src={user.avatar || `https://api.dicebear.com/9.x/initials/svg?seed=${user.username}`}
           alt="avatar"
           className="w-8 h-8 rounded-full border border-white"
         />

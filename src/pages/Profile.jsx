@@ -32,7 +32,7 @@ export default function Profile() {
   const avatarUrl =
     preview ||
     user?.avatar ||
-    "https://res.cloudinary.com/demo/image/upload/v1720000000/default_avatar.png";
+    `https://api.dicebear.com/9.x/initials/svg?seed=${user?.username}`
 
   // const handleSubmit = (values) => {
   //   const formData = new FormData();
