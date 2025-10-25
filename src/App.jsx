@@ -15,6 +15,7 @@ import Cart from "./pages/Cart";
 import Order from "./pages/Order";
 import ProductForm from "./components/formCreateProduct";
 import ListProduct from "./pages/ListProduct";
+import CreatePromotionForm from "./components/createPromotionForm";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
       <Route path="/cart" element={<Cart />} />
       <Route path="/order" element={<Order />} />
       <Route path="/products" element={<ListProduct/>} />
+      <Route path="/promotion" element={<CreatePromotionForm />} />
       {/* <Route path="/products/:name" element={<ListProduct/>} /> */}
     </Routes>
   );

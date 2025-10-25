@@ -34,9 +34,9 @@ const Order = () => {
     fetchData();
   }, []);
 
-  const fetchPreOrder = async () => {
+  const fetchPreOrder = async (addressId) => {
     if (chosenAddress) {
-      await api.post("/cart/shippingFee", { addressId: chosenAddress._id });
+      await api.post("/cart/shippingFee", { addressId});
       const res = await api.get("/cart/preOrder");
       setPreOrder(res.data.data);
     }else{
@@ -44,8 +44,7 @@ const Order = () => {
     }
   };
   useEffect(() => {
-    if (chosenAddress && chosenAddress._id) fetchPreOrder();
-    
+    if (chosenAddress && chosenAddress._id) fetchPreOrder(chosenAddress._id);
   }, [chosenAddress]);
 
   const chooseNewAddress = (id) => {
@@ -68,7 +67,7 @@ const Order = () => {
       },
       onSuccess: () => {
         toast.success("Thành công", "Vui lòng ấn vào giỏ hàng để xem thêm")
-        navigate("/products")
+        navigate("/")
         queryClient.invalidateQueries(["cartCount"]);
       },
       onError: (err) => {
