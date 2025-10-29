@@ -42,8 +42,8 @@ const ProductFormModal = () => {
       try {
         console.log("hello");
         const res = await axios.get(
-          // `${import.meta.env.VITE_LOCAL_PORT}/allTags`
-          `${import.meta.env.VITE_DEPLOY_PORT}/allTags`
+          `${import.meta.env.VITE_LOCAL_PORT}/allTags`
+          // `${import.meta.env.VITE_DEPLOY_PORT}/allTags`
         );
         const tags = res.data.data || [];
 
@@ -69,7 +69,7 @@ const ProductFormModal = () => {
   };
 
   // Kiểm tra xem tất cả biến thể hiện tại đều hợp lệ
-  //   const allVariantsValid = variants.every(isVariantValid);
+ 
 
   // ====== Quản lý biến thể ======
   const addVariant = () => {

@@ -13,7 +13,7 @@ import ProductDetail from "./pages/ProductDetail";
 import SellerRegister from "./pages/SellerRegister";
 import Cart from "./pages/Cart";
 import Order from "./pages/Order";
-import ProductForm from "./components/formCreateProduct";
+import ProductForm from "./components/FormCreateProduct";
 import ListProduct from "./pages/ListProduct";
 import CreatePromotionForm from "./components/createPromotionForm";
 import FormEditVariant from "./components/FormEditVariant";

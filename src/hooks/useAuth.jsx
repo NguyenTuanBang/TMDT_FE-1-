@@ -1,8 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import api from "../utils/api.jsx";
+import api from "../utils/api";
+import { useNavigate } from "react-router-dom";
 
 export default function useAuth() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const authQuery = useQuery({
     queryKey: ["auth"],
@@ -11,6 +13,14 @@ export default function useAuth() {
       return res.data.data.user;
     },
     retry: false,
+  });
+
+  const usersQuery = useQuery({
+    queryKey: ["users"],
+    queryFn: async () => {
+      const res = await api.get("/users");
+      return res.data.data.users;
+    },
   });
 
   const signup = useMutation({
@@ -22,6 +32,7 @@ export default function useAuth() {
       console.error("Đăng ký thất bại:", err);
     },
   });
+
   const resendOtp = useMutation({
     mutationFn: async (data) => {
       const res = await api.post("/users/resend-otp", data);
@@ -42,10 +53,20 @@ export default function useAuth() {
   const login = useMutation({
     mutationFn: async (data) => {
       const res = await api.post("/users/login", data);
-      return res.data.data.user;
+      return res.data.data.user; // user chứa role
     },
-    onSuccess: () => {
+    onSuccess: (user) => {
       queryClient.invalidateQueries(["auth"]);
+      console.log(user);
+      if (user.role === "admin") {
+        console.log("admin");
+        navigate("/admin");
+      } else if (user.role === "seller") {
+        console.log("seller");
+        navigate("/seller");
+      } else {
+        navigate("/"); // user bình thường
+      }
     },
   });
 
@@ -86,10 +107,28 @@ export default function useAuth() {
     },
   });
 
+  const toggleUserActive = useMutation({
+    mutationFn: async ({ isActive, userId }) => {
+      const res = await api.patch(`/users/status`, { isActive, userId });
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["users"]);
+    },
+    onError: (err) => {
+      console.error("Lỗi khi thay đổi trạng thái người dùng:", err);
+    },
+  });
+
   return {
     user: authQuery.data,
     isLoading: authQuery.isLoading,
     isError: authQuery.isError,
+
+    users: usersQuery.data,
+    isUsersLoading: usersQuery.isLoading,
+    isUsersError: usersQuery.isError,
+
     login,
     signup,
     verifyOtp,
@@ -98,5 +137,7 @@ export default function useAuth() {
     logout,
     confirmChangePassword,
     changePassword,
+
+    toggleUserActive,
   };
 }

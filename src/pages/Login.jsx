@@ -32,7 +32,7 @@ export default function Login() {
     login.mutate(form, {
       onSuccess: () => {
         toast.success("Đăng nhập thành công");
-        navigate("/myaccount");
+        // navigate("/myaccount");
       },
       onError: (err) => {
         toast.error(
