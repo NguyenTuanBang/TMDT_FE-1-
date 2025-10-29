@@ -8,6 +8,7 @@ import axios from "axios";
 
 const Category = () => {
   const [categories, setCategories] = useState([]);
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -22,13 +23,18 @@ const Category = () => {
     fetchCategories();
   }, []);
 
+  const handOnClickCategory = (id) => {
+    navigate(`/products?category=${id}`);
+  }
+
   return (
     <div className="bg-white rounded-xl shadow-md p-4">
       <div className="grid grid-cols-6 gap-6 justify-start py-6">
         {categories.map((cat) => (
           <div
-            key={cat.id}
+            key={cat._id}
             className="flex flex-col items-center cursor-pointer hover:scale-105 transition"
+            onClick={() => handOnClickCategory(cat._id)}
           >
             <div className="w-30 h-30 flex items-center justify-center rounded-full bg-gray-100 overflow-hidden shadow-md mb-2">
               <img

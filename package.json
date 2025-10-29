@@ -31,6 +31,7 @@
     "framer-motion": "^12.23.22",
     "gsap": "^3.13.0",
     "leaflet": "^1.9.4",
+    "lucide-react": "^0.548.0",
     "react": "^19.1.1",
     "react-datepicker": "^8.7.0",
     "react-dom": "^19.1.1",

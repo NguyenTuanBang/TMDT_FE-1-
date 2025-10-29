@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import api from "../utils/api.jsx";
 import {
   Form,
   Input,
-  Button,
   Upload,
   Space,
   Divider,
   Select,
   InputNumber,
+  Button,
   message,
   Card,
   Image,
@@ -22,6 +21,8 @@ import {
   UploadOutlined,
   DeleteOutlined,
 } from "@ant-design/icons";
+import { Button as ButtonHero } from "@heroui/button";
+import axios from "axios";
 
 const ProductFormModal = () => {
   const [form] = Form.useForm();
@@ -34,20 +35,18 @@ const ProductFormModal = () => {
       sizes: [{ size: "", quantity: 0, price: 0 }],
     },
   ]);
-  const [submitable, setSubmittable] = useState(false);
   const [tagOption, setTagOption] = useState([]);
 
-  
   useEffect(() => {
     const getTagOption = async () => {
       try {
+        console.log("hello");
         const res = await axios.get(
-          `${import.meta.env.VITE_LOCAL_PORT}/allTags`
+          // `${import.meta.env.VITE_LOCAL_PORT}/allTags`
           `${import.meta.env.VITE_DEPLOY_PORT}/allTags`
         );
         const tags = res.data.data || [];
-        
-        // map lại cho phù hợp với Select (hiển thị = name, giá trị = _id)
+
         const formattedTags = tags.map((tag) => ({
           label: tag.nameTag,
           value: tag._id,
@@ -58,22 +57,19 @@ const ProductFormModal = () => {
         console.error("Lỗi khi lấy tag:", err);
       }
     };
-    
+
     getTagOption();
   }, []);
-  
+
   // Kiểm tra xem 1 biến thể có hợp lệ không
   const isVariantValid = (variant) => {
     if (!variant.color || !variant.image) return false;
     if (variant.sizes.length === 0) return false;
     return variant.sizes.every((s) => s.size && s.quantity > 0 && s.price > 0);
   };
-  
+
   // Kiểm tra xem tất cả biến thể hiện tại đều hợp lệ
-  const allVariantsValid = variants.every(isVariantValid);
-  useEffect(() => {
-    setSubmittable(allVariantsValid);
-  }, [variants]);
+  //   const allVariantsValid = variants.every(isVariantValid);
 
   // ====== Quản lý biến thể ======
   const addVariant = () => {
@@ -157,7 +153,7 @@ const ProductFormModal = () => {
         tags: values.tags, // array các _id
         variants: variants.map((v) => ({
           color: v.color,
-          url: v.image, // hoặc File ảnh
+          url: v.image,
           sizes: v.sizes.map((s) => ({
             size: s.size,
             quantity: s.quantity,
@@ -195,7 +191,7 @@ const ProductFormModal = () => {
       formData.append("variants", JSON.stringify(variantsWithoutFile));
 
       // Thêm các file riêng
-      imageFiles.forEach(({ index, file }) => {
+      imageFiles.forEach(({ file }) => {
         formData.append("variantImages", file);
       });
 
@@ -214,275 +210,291 @@ const ProductFormModal = () => {
   return (
     <>
       {/* Nút mở modal */}
-      <Button
+      <ButtonHero
         type="primary"
-        icon={<PlusOutlined />}
         onClick={() => setOpen(true)}
+        className="
+    flex items-center justify-center gap-2
+    bg-gradient-to-r from-green-500 to-green-600
+    text-white font-semibold text-lg
+    px-5 py-3 rounded-lg
+    shadow-md hover:shadow-lg
+    transform hover:-translate-y-0.5 transition-all duration-200
+    min-h-[55px]
+  "
       >
+        {/* Icon + */}
+        <PlusOutlined className="text-white w-5 h-5" />
         Thêm sản phẩm
-      </Button>
+      </ButtonHero>
 
       {/* Modal chứa form */}
-      <Modal
-        title="Thêm sản phẩm mới"
-        open={open}
-        onCancel={() => setOpen(false)}
-        footer={null}
-        width={1000} // rộng để hiển thị 2 card cạnh nhau
-        centered
-      >
-        <Form form={form} layout="vertical" onFinish={onFinish}>
-          {/* Thông tin cơ bản */}
-          <Card title="Thông tin cơ bản" className="mb-4">
-            <Form.Item
-              name="name"
-              label="Tên sản phẩm"
-              rules={[{ required: true, message: "Nhập tên sản phẩm" }]}
-            >
-              <Input placeholder="Nhập tên sản phẩm" />
-            </Form.Item>
+      <div>
+        {" "}
+        <Modal
+          title="Thêm sản phẩm mới"
+          open={open}
+          onCancel={() => setOpen(false)}
+          footer={null}
+          width={1000} // rộng để hiển thị 2 card cạnh nhau
+          centered
+        >
+          <Form form={form} layout="vertical" onFinish={onFinish}>
+            {/* Thông tin cơ bản */}
+            <Card title="Thông tin cơ bản" className="mb-4">
+              <Form.Item
+                name="name"
+                label="Tên sản phẩm"
+                rules={[{ required: true, message: "Nhập tên sản phẩm" }]}
+              >
+                <Input placeholder="Nhập tên sản phẩm" />
+              </Form.Item>
 
-            <Form.Item
-              name="description"
-              label="Mô tả"
-              rules={[{ required: true, message: "Nhập mô tả sản phẩm" }]}
-            >
-              <Input.TextArea rows={3} placeholder="Nhập mô tả sản phẩm" />
-            </Form.Item>
+              <Form.Item
+                name="description"
+                label="Mô tả"
+                rules={[{ required: true, message: "Nhập mô tả sản phẩm" }]}
+              >
+                <Input.TextArea rows={3} placeholder="Nhập mô tả sản phẩm" />
+              </Form.Item>
 
-            <Form.Item
-              name="tags"
-              label="Tags"
-              rules={[
-                {
-                  validator: (_, value) => {
-                    if (value && value.length > 0) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(
-                      new Error("Vui lòng nhập ít nhất 1 tag")
-                    );
+              <Form.Item
+                name="tags"
+                label="Tags"
+                rules={[
+                  {
+                    validator: (_, value) => {
+                      if (value && value.length > 0) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(
+                        new Error("Vui lòng nhập ít nhất 1 tag")
+                      );
+                    },
                   },
-                },
-              ]}
+                ]}
+              >
+                <Select
+                  mode="tags"
+                  tokenSeparators={[","]}
+                  placeholder="Nhập hoặc chọn tags"
+                  options={tagOption}
+                  onChange={(values) => {
+                    // 🔹 Chuẩn hóa tag: trim + lowercase
+                    const normalized = values
+                      .map((v) => v.trim().toLowerCase())
+                      .filter((v) => v.length > 0); // loại bỏ chuỗi rỗng
+
+                    // 🔹 Loại bỏ trùng lặp
+                    const unique = [...new Set(normalized)];
+
+                    // Cập nhật lại form value
+                    form.setFieldValue("tags", unique);
+                  }}
+                />
+              </Form.Item>
+            </Card>
+
+            <Divider orientation="left">Biến thể sản phẩm</Divider>
+
+            {/* Grid hiển thị 2 card mỗi hàng */}
+            <div
+              style={{
+                maxHeight: "600px", // bạn có thể chỉnh 300–500px tùy giao diện
+                overflowY: "auto",
+                paddingRight: "8px", // tránh che nội dung khi có scrollbar
+              }}
             >
-              <Select
-                mode="multiple"
-                tokenSeparators={[","]}
-                placeholder="Nhập hoặc chọn tags"
-                options={tagOption}
-                onChange={(values) => {
-                  // 🔹 Chuẩn hóa tag: trim + lowercase
-                  const normalized = values
-                    .map((v) => v.trim().toLowerCase())
-                    .filter((v) => v.length > 0); // loại bỏ chuỗi rỗng
-
-                  // 🔹 Loại bỏ trùng lặp
-                  const unique = [...new Set(normalized)];
-
-                  // Cập nhật lại form value
-                  form.setFieldValue("tags", unique);
-                }}
-              />
-            </Form.Item>
-          </Card>
-
-          <Divider orientation="left">Biến thể sản phẩm</Divider>
-
-          {/* Grid hiển thị 2 card mỗi hàng */}
-          <div
-            style={{
-              maxHeight: "600px", // bạn có thể chỉnh 300–500px tùy giao diện
-              overflowY: "auto",
-              paddingRight: "8px", // tránh che nội dung khi có scrollbar
-            }}
-          >
-            <Row gutter={[16, 16]}>
-              {variants.map((variant, vIndex) => (
-                <Col xs={24} md={12} key={variant.id}>
-                  <Card
-                    title={`Biến thể ${vIndex + 1}`}
-                    extra={
-                      variants.length > 1 && (
-                        <Button
-                          type="text"
-                          danger
-                          icon={<DeleteOutlined />}
-                          onClick={() => removeVariant(variant.id)}
-                        />
-                      )
-                    }
-                    bordered
-                    style={{
-                      maxHeight: "400px", // bạn có thể chỉnh 300–500px tùy giao diện
-                      overflowY: "auto",
-                      paddingRight: "8px",
-                      height: "100%", // tránh che nội dung khi có scrollbar
-                    }}
-                    hoverable
-                  >
-                    <Space direction="vertical" style={{ width: "100%" }}>
-                      {/* Upload ảnh */}
-                      <Upload
-                        beforeUpload={(file) => handleUpload(file, vIndex)}
-                        showUploadList={false}
-                        accept="image/*"
-                      >
-                        <Button icon={<UploadOutlined />}>
-                          Chọn ảnh sản phẩm
-                        </Button>
-                      </Upload>
-
-                      {/* Hiển thị ảnh xem trước */}
-                      {variant.preview && (
-                        <Image
-                          src={variant.preview}
-                          alt="preview"
-                          width={120}
-                          height={120}
-                          style={{
-                            borderRadius: 8,
-                            objectFit: "cover",
-                            border: "1px solid #f0f0f0",
-                          }}
-                        />
-                      )}
-
-                      {/* Màu sắc */}
-                      <Input
-                        placeholder="Nhập màu sắc"
-                        value={variant.color}
-                        onChange={(e) => {
-                          const newVariants = [...variants];
-                          newVariants[vIndex].color = e.target.value;
-                          setVariants(newVariants);
-                        }}
-                      />
-
-                      {/* Danh sách size */}
-                      <Divider orientation="left" style={{ marginTop: 12 }}>
-                        Size
-                      </Divider>
-
-                      {variant.sizes.map((s, sIndex) => (
-                        <div
-                          key={sIndex}
-                          style={{
-                            border: "1px solid #f0f0f0",
-                            padding: 12,
-                            borderRadius: 8,
-                            marginBottom: 8,
-                            background: "#fafafa",
-                          }}
+              <Row gutter={[16, 16]}>
+                {variants.map((variant, vIndex) => (
+                  <Col xs={24} md={12} key={variant.id}>
+                    <Card
+                      title={`Biến thể ${vIndex + 1}`}
+                      extra={
+                        variants.length > 1 && (
+                          <Button
+                            type="text"
+                            danger
+                            icon={<DeleteOutlined />}
+                            onClick={() => removeVariant(variant.id)}
+                          />
+                        )
+                      }
+                      bordered
+                      style={{
+                        maxHeight: "400px", // bạn có thể chỉnh 300–500px tùy giao diện
+                        overflowY: "auto",
+                        paddingRight: "8px",
+                        height: "100%", // tránh che nội dung khi có scrollbar
+                      }}
+                      hoverable
+                    >
+                      <Space direction="vertical" style={{ width: "100%" }}>
+                        {/* Upload ảnh */}
+                        <Upload
+                          beforeUpload={(file) => handleUpload(file, vIndex)}
+                          showUploadList={false}
+                          accept="image/*"
                         >
-                          <Row gutter={12} align="middle">
-                            <Col span={6}>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Size
-                              </label>
-                              <Input
-                                placeholder="VD: S, M, L"
-                                value={s.size}
-                                onChange={(e) => {
-                                  const newVariants = [...variants];
-                                  newVariants[vIndex].sizes[sIndex].size =
-                                    e.target.value;
-                                  setVariants(newVariants);
-                                }}
-                              />
-                            </Col>
+                          <Button icon={<UploadOutlined />}>
+                            Chọn ảnh sản phẩm
+                          </Button>
+                        </Upload>
 
-                            <Col span={8}>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Số lượng
-                              </label>
-                              <InputNumber
-                                min={0}
-                                value={s.quantity}
-                                placeholder="Nhập số lượng"
-                                onChange={(val) => {
-                                  const newVariants = [...variants];
-                                  newVariants[vIndex].sizes[sIndex].quantity =
-                                    val;
-                                  setVariants(newVariants);
-                                }}
-                                style={{ width: "100%" }}
-                              />
-                            </Col>
+                        {/* Hiển thị ảnh xem trước */}
+                        {variant.preview && (
+                          <Image
+                            src={variant.preview}
+                            alt="preview"
+                            width={120}
+                            height={120}
+                            style={{
+                              borderRadius: 8,
+                              objectFit: "cover",
+                              border: "1px solid #f0f0f0",
+                            }}
+                          />
+                        )}
 
-                            <Col span={8}>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Giá (VNĐ)
-                              </label>
-                              <InputNumber
-                                min={0}
-                                value={s.price}
-                                placeholder="Nhập giá sản phẩm"
-                                formatter={(value) =>
-                                  `${value}`.replace(
-                                    /\B(?=(\d{3})+(?!\d))/g,
-                                    "."
-                                  )
-                                }
-                                parser={(value) => value.replace(/\./g, "")}
-                                style={{ width: "100%" }}
-                                onChange={(val) => {
-                                  const newVariants = [...variants];
-                                  newVariants[vIndex].sizes[sIndex].price = val;
-                                  setVariants(newVariants);
-                                }}
-                              />
-                            </Col>
+                        {/* Màu sắc */}
+                        <Input
+                          placeholder="Nhập màu sắc"
+                          value={variant.color}
+                          onChange={(e) => {
+                            const newVariants = [...variants];
+                            newVariants[vIndex].color = e.target.value;
+                            setVariants(newVariants);
+                          }}
+                        />
 
-                            <Col span={2} style={{ textAlign: "center" }}>
-                              {variant.sizes.length > 1 && (
-                                <Button
-                                  type="text"
-                                  danger
-                                  icon={<DeleteOutlined />}
-                                  onClick={() => removeSize(variant.id, sIndex)}
+                        {/* Danh sách size */}
+                        <Divider orientation="left" style={{ marginTop: 12 }}>
+                          Size
+                        </Divider>
+
+                        {variant.sizes.map((s, sIndex) => (
+                          <div
+                            key={sIndex}
+                            style={{
+                              border: "1px solid #f0f0f0",
+                              padding: 12,
+                              borderRadius: 8,
+                              marginBottom: 8,
+                              background: "#fafafa",
+                            }}
+                          >
+                            <Row gutter={12} align="middle">
+                              <Col span={6}>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  Size
+                                </label>
+                                <Input
+                                  placeholder="VD: S, M, L"
+                                  value={s.size}
+                                  onChange={(e) => {
+                                    const newVariants = [...variants];
+                                    newVariants[vIndex].sizes[sIndex].size =
+                                      e.target.value;
+                                    setVariants(newVariants);
+                                  }}
                                 />
-                              )}
-                            </Col>
-                          </Row>
-                        </div>
-                      ))}
+                              </Col>
 
-                      <Button
-                        type="dashed"
-                        icon={<PlusOutlined />}
-                        onClick={() => addSize(variant.id)}
-                      >
-                        Thêm size
-                      </Button>
-                    </Space>
-                  </Card>
-                </Col>
-              ))}
-            </Row>
-          </div>
+                              <Col span={8}>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  Số lượng
+                                </label>
+                                <InputNumber
+                                  min={0}
+                                  value={s.quantity}
+                                  placeholder="Nhập số lượng"
+                                  onChange={(val) => {
+                                    const newVariants = [...variants];
+                                    newVariants[vIndex].sizes[sIndex].quantity =
+                                      val;
+                                    setVariants(newVariants);
+                                  }}
+                                  style={{ width: "100%" }}
+                                />
+                              </Col>
 
-          {/* Nút thêm biến thể */}
-          <Button
-            type="dashed"
-            icon={<PlusOutlined />}
-            onClick={addVariant}
-            block
-            className="mt-4 mb-4"
-            disabled={!variants.every(isVariantValid)}
-          >
-            Thêm biến thể
-          </Button>
+                              <Col span={8}>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  Giá (VNĐ)
+                                </label>
+                                <InputNumber
+                                  min={0}
+                                  value={s.price}
+                                  placeholder="Nhập giá sản phẩm"
+                                  formatter={(value) =>
+                                    `${value}`.replace(
+                                      /\B(?=(\d{3})+(?!\d))/g,
+                                      "."
+                                    )
+                                  }
+                                  parser={(value) => value.replace(/\./g, "")}
+                                  style={{ width: "100%" }}
+                                  onChange={(val) => {
+                                    const newVariants = [...variants];
+                                    newVariants[vIndex].sizes[sIndex].price =
+                                      val;
+                                    setVariants(newVariants);
+                                  }}
+                                />
+                              </Col>
 
-          {/* Nút hành động */}
-          <Space style={{ display: "flex", justifyContent: "end" }}>
-            <Button onClick={() => setOpen(false)}>Hủy</Button>
-            <Button type="primary" htmlType="submit" disabled={!submitable}>
-              Lưu sản phẩm
+                              <Col span={2} style={{ textAlign: "center" }}>
+                                {variant.sizes.length > 1 && (
+                                  <Button
+                                    type="text"
+                                    danger
+                                    icon={<DeleteOutlined />}
+                                    onClick={() =>
+                                      removeSize(variant.id, sIndex)
+                                    }
+                                  />
+                                )}
+                              </Col>
+                            </Row>
+                          </div>
+                        ))}
+
+                        <Button
+                          type="dashed"
+                          icon={<PlusOutlined />}
+                          onClick={() => addSize(variant.id)}
+                        >
+                          Thêm size
+                        </Button>
+                      </Space>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+            </div>
+
+            {/* Nút thêm biến thể */}
+            <Button
+              type="dashed"
+              icon={<PlusOutlined />}
+              onClick={addVariant}
+              block
+              className="mt-4 mb-4"
+              disabled={!variants.every(isVariantValid)}
+            >
+              Thêm biến thể
             </Button>
-          </Space>
-        </Form>
-      </Modal>
+
+            {/* Nút hành động */}
+            <Space style={{ display: "flex", justifyContent: "end" }}>
+              <Button onClick={() => setOpen(false)}>Hủy</Button>
+              <Button type="primary" htmlType="">
+                Lưu sản phẩm
+              </Button>
+            </Space>
+          </Form>
+        </Modal>
+      </div>
     </>
   );
 };

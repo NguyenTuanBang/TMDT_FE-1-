@@ -128,7 +128,7 @@ const FilterDrawer = ({
             </Space>
             {isInvalidPrice && (
               <p className="text-red-500 text-sm mt-2">
-                ⚠️ Giá tối thiểu phải nhỏ hơn hoặc bằng giá tối đa.
+                Giá tối thiểu phải nhỏ hơn hoặc bằng giá tối đa.
               </p>
             )}
           </div>

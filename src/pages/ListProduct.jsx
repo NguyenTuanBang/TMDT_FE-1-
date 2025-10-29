@@ -11,21 +11,28 @@ const ListProduct = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const name = queryParams.get("name");
+  const tag = queryParams.get("category");
   const [currentPage, setCurrentPage] = useState(1);
   const [category, setCategory] = useState([]);
   const [price, setPrice] = useState({ min: 0, max: Number.MAX_SAFE_INTEGER });
+  useEffect(() => {
+    if (tag) {
+      setCategory([tag]); 
+    }
+  }, [tag]);
 
   const pageSize = 10;
   const [data, setData] = useState([]);
   const [total, setTotal] = useState(0);
   const [open, setOpen] = useState(false);
-  
-  
+
   const handlePageChange = (page) => setCurrentPage(page);
   const fetchData = async () => {
     try {
       // const url = `${import.meta.env.VITE_LOCAL_PORT}/products?page=${currentPage}`;
-      const url = `${import.meta.env.VITE_DEPLOY_PORT}/products?page=${currentPage}`;
+      const url = `${
+        import.meta.env.VITE_DEPLOY_PORT
+      }/products?page=${currentPage}`;
       const body = { keyword: name, category, price };
       // dùng POST thay cho GET
       const res = await axios.post(url, body);
@@ -46,8 +53,6 @@ const ListProduct = () => {
     // };
     fetchData();
   }, [currentPage, name, category, price]);
-
-  
 
   return (
     <>

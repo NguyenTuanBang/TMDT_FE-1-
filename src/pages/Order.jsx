@@ -63,7 +63,7 @@ const Order = () => {
   }
   const onPaymentMutation = useMutation({
       mutationFn: async () => {
-        return await api.post('/order', {address: chosenAddress._id})
+        return await api.post('/orders', {address: chosenAddress._id})
       },
       onSuccess: () => {
         toast.success("Thành công", "Vui lòng ấn vào giỏ hàng để xem thêm")
