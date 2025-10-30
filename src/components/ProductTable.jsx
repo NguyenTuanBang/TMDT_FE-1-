@@ -9,6 +9,7 @@ import {
   Tooltip,
   Chip,
   Pagination,
+  Switch,
 } from "@heroui/react";
 import { EyeIcon, Trash2Icon } from "lucide-react";
 
@@ -18,7 +19,12 @@ const statusColorMap = {
   "hết hàng": "warning",
 };
 
-export default function ProductTable({ columns, data = [], onView, onDelete }) {
+export default function ProductTable({
+  columns,
+  data = [],
+  onView,
+  onToggleStatus,
+}) {
   const [page, setPage] = useState(1);
   const rowsPerPage = 6;
 
@@ -85,7 +91,8 @@ export default function ProductTable({ columns, data = [], onView, onDelete }) {
 
         case "actions":
           return (
-            <div className="flex justify-center gap-3">
+            <div className="flex justify-center items-center gap-3">
+              {/* 👁️ Nút xem chi tiết */}
               <Tooltip content="Xem chi tiết">
                 <span
                   className="text-blue-600 cursor-pointer hover:scale-110 transition-transform"
@@ -94,13 +101,32 @@ export default function ProductTable({ columns, data = [], onView, onDelete }) {
                   <EyeIcon size={20} />
                 </span>
               </Tooltip>
-              <Tooltip color="danger" content="Xóa sản phẩm">
-                <span
-                  className="text-red-500 cursor-pointer hover:scale-110 transition-transform"
-                  onClick={() => onDelete?.(product)}
-                >
-                  <Trash2Icon size={20} />
-                </span>
+
+              {/* 🔄 Switch đổi trạng thái */}
+              <Tooltip
+                content={
+                  product.status === "Đang bán"
+                    ? "Chuyển sang Ngừng bán"
+                    : "Chuyển sang Đang bán"
+                }
+              >
+                <Switch
+                  size="sm"
+                  color="success"
+                  isSelected={product.status === "Đang bán"}
+                  onChange={() => onToggleStatus?.(product)}
+                  className={`rounded-full transition-all duration-300 ${
+                    product.status === "Đang bán"
+                      ? "" // bật thì giữ mặc định
+                      : "border-2 border-gray-500 bg-gray-200 shadow-md hover:border-gray-600 hover:shadow-lg"
+                  }`}
+                  classNames={{
+                    thumb:
+                      product.status === "Đang bán"
+                        ? "" // bật thì mặc định
+                        : "bg-gray-400 shadow-inner border border-white", // tắt thì thumb rõ hơn
+                  }}
+                />
               </Tooltip>
             </div>
           );
@@ -109,7 +135,7 @@ export default function ProductTable({ columns, data = [], onView, onDelete }) {
           return null;
       }
     },
-    [onView, onDelete, page]
+    [onView, onToggleStatus, page]
   );
 
   return (

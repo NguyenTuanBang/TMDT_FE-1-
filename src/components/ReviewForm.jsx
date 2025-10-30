@@ -1,8 +1,9 @@
 import { useState, useRef } from "react";
 import { FaStar } from "react-icons/fa";
 
-import api from "../utils/api.jsx";
-import useToast from "../hooks/useToast.jsx";
+import api from "../utils/api";
+import useToast from "../hooks/useToast";
+import { useParams } from "react-router-dom";
 
 function ReviewForm() {
   const [rating, setRating] = useState(0);
@@ -11,6 +12,7 @@ function ReviewForm() {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
+  const { id } = useParams();
 
   const fileInputRef = useRef(null);
 
@@ -51,6 +53,7 @@ function ReviewForm() {
     const formData = new FormData();
     formData.append("rating", rating);
     formData.append("review", reviewText);
+    formData.append("productId", id);
 
     images.forEach((img) => {
       formData.append("images", img.file);

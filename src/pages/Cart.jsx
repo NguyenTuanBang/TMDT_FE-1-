@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import Navbar from "../components/Navbar.jsx";
+import Navbar from "../components/Navbar";
 import { Button } from "@heroui/react";
-import api from "../utils/api.jsx";
-import CartDropdown from "../components/CartDropDown.jsx";
+import api from "../utils/api";
+import CartDropdown from "../components/CartDropDown";
 import { useNavigate } from "react-router-dom";
 
 function Cart() {
@@ -14,7 +14,7 @@ function Cart() {
   const fetchCart = async () => {
     try {
       const res = await api.get(`/cart/`);
-      const cartData = res.data.data
+      const cartData = res.data.data;
       setCart(cartData);
       setCartStores(cartData.Store);
       let hasChosenItem = false;
@@ -39,7 +39,7 @@ function Cart() {
     fetchCart();
   }, []);
 
-  console.log(displayPayBtn)
+  console.log(displayPayBtn);
   return (
     <>
       <Navbar />
@@ -68,7 +68,9 @@ function Cart() {
               </div>
 
               <button
-                className={`bg-gradient-to-r from-blue-500 to-blue-700 text-white px-8 py-3 rounded-lg font-semibold shadow-md hover:opacity-90 transition-all active:scale-95 ${displayPayBtn ? '' : 'opacity-50 cursor-not-allowed disabled'}`}
+                className={`bg-gradient-to-r from-blue-500 to-blue-700 text-white px-8 py-3 rounded-lg font-semibold shadow-md hover:opacity-90 transition-all active:scale-95 ${
+                  displayPayBtn ? "" : "opacity-50 cursor-not-allowed disabled"
+                }`}
                 onClick={() => navigate("/order")}
                 disabled={!displayPayBtn}
               >

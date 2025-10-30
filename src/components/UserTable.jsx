@@ -10,6 +10,7 @@ import {
   Chip,
   Tooltip,
   Pagination,
+  Switch,
 } from "@heroui/react";
 import { EyeIcon, EditIcon, DeleteIcon, LockIcon } from "../icons/icons";
 import { formatTimeAgo } from "../utils/FormatTimeAgo";
@@ -100,13 +101,28 @@ export default function UserTable({ data = [], onView, onEdit, onDelete }) {
                   <EditIcon />
                 </span>
               </Tooltip>
-              <Tooltip color="danger" content="Delete user">
-                <span
-                  className="text-lg text-danger cursor-pointer active:opacity-50"
-                  onClick={() => onDelete?.(user)}
-                >
-                  <DeleteIcon />
-                </span>
+
+              <Tooltip
+                content={
+                  user.isActive ? "Chuyển sang bị khóa" : "Mở khóa người dùng"
+                }
+              >
+                <Switch
+                  size="sm"
+                  color="primary"
+                  isSelected={user.isActive}
+                  onChange={() => onDelete?.(user)} // tái sử dụng hàm xóa để hiện modal xác nhận
+                  className={`rounded-full transition-all duration-300 ${
+                    user.isActive
+                      ? "" // giữ mặc định khi đang hoạt động
+                      : "border-2 border-gray-500 bg-gray-200 shadow-md hover:border-gray-600 hover:shadow-lg"
+                  }`}
+                  classNames={{
+                    thumb: user.isActive
+                      ? ""
+                      : "bg-gray-400 shadow-inner border border-white",
+                  }}
+                />
               </Tooltip>
             </div>
           );

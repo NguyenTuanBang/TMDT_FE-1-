@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import ReviewForm from "./ReviewForm.jsx";
-import ReviewOverview from "./ReviewOverview.jsx";
-import api from "../utils/api.jsx";
+import ReviewForm from "./ReviewForm";
+import ReviewOverview from "./ReviewOverview";
+import api from "../utils/api";
 import { FaStar } from "react-icons/fa";
 
-function ReviewSection() {
+function ReviewSection({ id }) {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
@@ -13,7 +13,7 @@ function ReviewSection() {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const res = await api.get(`/reviews`);
+        const res = await api.get(`/reviews/${id}`);
         setReviews(res.data.data);
       } catch (error) {
         console.error("Error fetching reviews:", error);
@@ -51,7 +51,7 @@ function ReviewSection() {
             filteredReviews.map((review, index) => (
               <div key={index} className="flex gap-4 pb-4 mb-4">
                 <img
-                  src={review.user.avatar}
+                  src={`${review.user?.avatar}`}
                   alt={review.user?.username || "Người dùng"}
                   className="w-12 h-12 rounded-full object-cover"
                 />

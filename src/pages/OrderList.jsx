@@ -45,6 +45,8 @@ export default function OrderList() {
     limit: 10,
   });
 
+  const [sortOrder, setSortOrder] = useState("desc");
+
   const location = useLocation();
   const orderUser = location.state?.order || null;
   const [inputSearch, setInputSearch] = useState(
@@ -80,9 +82,17 @@ export default function OrderList() {
 
   if (!data) return null;
 
-  const orders = data.filter((order) =>
-    order._id?.toLowerCase().includes(inputSearch.toLowerCase().trim())
-  );
+  const orders = data
+    .filter((order) =>
+      order._id?.toLowerCase().includes(inputSearch.toLowerCase().trim())
+    )
+    .sort((a, b) => {
+      if (sortOrder === "desc") {
+        return new Date(b.createdAt) - new Date(a.createdAt); // gần nhất
+      } else {
+        return new Date(a.createdAt) - new Date(b.createdAt); // lâu nhất
+      }
+    });
   console.log(orders);
   const pagination = data?.pagination || {};
 
@@ -124,6 +134,16 @@ export default function OrderList() {
             <SelectItem key="completed">Hoàn thành</SelectItem>
             <SelectItem key="cancelled">Đã hủy</SelectItem>
           </Select>
+
+          <Select
+            label="Sắp xếp"
+            className="w-48 border border-gray-300 rounded-xl shadow-sm hover:shadow-md transition-all"
+            onChange={(e) => setSortOrder(e.target.value)}
+            selectedKeys={[sortOrder]}
+          >
+            <SelectItem key="desc">Gần nhất</SelectItem>
+            <SelectItem key="asc">Xa nhất</SelectItem>
+          </Select>
         </div>
 
         <Input
@@ -158,12 +178,13 @@ export default function OrderList() {
 
       {/* ConfirmModal */}
       <ConfirmModal
+        color="warning"
         isOpen={isConfirmOpen}
         onClose={onConfirmClose}
         title="Xác nhận hủy đơn hàng"
         message={
           orderToConfirm
-            ? `Bạn có chắc muốn hủy đơn "${orderToConfirm.code}" không?`
+            ? `Bạn có chắc muốn hủy đơn "${orderToConfirm._id}" không?`
             : ""
         }
         confirmText="Hủy đơn"
@@ -305,12 +326,27 @@ export default function OrderList() {
                 </tbody>
               </table>
             </div>
-
+            {/* 
             <div className="text-right mt-4">
               <strong>Tổng cộng:</strong>{" "}
               <span className="text-lg text-orange-600 font-semibold">
                 {formatCurrency(selectedOrder.final_amount)}
               </span>
+            </div> */}
+
+            <div className="mt-4 space-y-1 text-right text-gray-700">
+              <p>
+                <strong>Tiền tạm tính:</strong>{" "}
+                {formatCurrency(selectedOrder.total_amount)}
+              </p>
+              <p>
+                <strong>Phí ship:</strong>{" "}
+                {formatCurrency(selectedOrder.shippingFee)}
+              </p>
+              <p className="text-lg text-orange-400 font-semibold">
+                <strong>Tổng cộng:</strong>{" "}
+                {formatCurrency(selectedOrder.final_amount)}
+              </p>
             </div>
 
             {/* Nút đóng */}

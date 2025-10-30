@@ -8,15 +8,12 @@ import {
   useDisclosure,
   Tooltip,
 } from "@heroui/react";
-import React from "react";
-import { Search } from "lucide-react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { Search, Star, Edit2, Trash2 } from "lucide-react";
 import useProudct, { useChangeProductStatus } from "../hooks/useProduct";
 import useToast from "../hooks/useToast";
 import ConfirmModal from "../components/ConfirmModal";
 import ProductTable from "../components/ProductTable";
-import { Star } from "lucide-react";
-import { Edit2, Trash2 } from "lucide-react";
 import FormCreateProduct from "../components/FormCreateProduct";
 
 // helper format tiền
@@ -65,7 +62,24 @@ export default function ProductList({ storeProduct }) {
 
   if (!data) return null;
 
-  const products = storeProduct ? storeProduct : [...data];
+  // Lọc sản phẩm theo trạng thái + search
+  const products = (storeProduct ? storeProduct : [...data]).filter(
+    (product) => {
+      // Lọc trạng thái
+      if (filters.status && product.status !== filters.status) return false;
+      // Lọc search theo tên hoặc mã
+      if (
+        filters.search &&
+        !(
+          product.name.toLowerCase().includes(filters.search.toLowerCase()) ||
+          product._id.toLowerCase().includes(filters.search.toLowerCase())
+        )
+      ) {
+        return false;
+      }
+      return true;
+    }
+  );
 
   const pagination = data?.pagination || {};
 
@@ -90,8 +104,6 @@ export default function ProductList({ storeProduct }) {
       return acc;
     }, []);
 
-    console.log(groupedByColor);
-
     setSelectedProduct({
       ...product,
       groupedByColor,
@@ -107,9 +119,11 @@ export default function ProductList({ storeProduct }) {
 
   const handleConfirmDelete = () => {
     if (!orderToConfirm) return;
-    console.log(orderToConfirm);
-    changeStatus({ id: orderToConfirm._id, status: "Ngừng bán" });
-    toast.success("Thành công", `Đã huỷ đơn ${orderToConfirm.code}`);
+
+    const newStatus =
+      orderToConfirm.status === "Đang bán" ? "Ngừng bán" : "Đang bán";
+    changeStatus({ id: orderToConfirm._id, status: newStatus });
+    toast.success("Thành công", `Đã chuyển sang trạng thái ${newStatus}`);
     onConfirmClose();
   };
 
@@ -128,8 +142,8 @@ export default function ProductList({ storeProduct }) {
             selectedKeys={[filters.status || ""]}
           >
             <SelectItem key="">Tất cả</SelectItem>
-            <SelectItem key="pending">Đang bán</SelectItem>
-            <SelectItem key="shipping">Ngưng bán</SelectItem>
+            <SelectItem key="Đang bán">Đang bán</SelectItem>
+            <SelectItem key="Ngừng bán">Ngừng bán</SelectItem>
           </Select>
         </div>
 
@@ -143,7 +157,7 @@ export default function ProductList({ storeProduct }) {
         />
       </div>
 
-      {/* Bảng đơn hàng */}
+      {/* Bảng sản phẩm */}
       <ProductTable
         columns={columns}
         data={products}
@@ -153,7 +167,7 @@ export default function ProductList({ storeProduct }) {
           setFilters((prev) => ({ ...prev, page: newPage }))
         }
         onView={handleView}
-        onDelete={handleDelete}
+        onToggleStatus={handleDelete}
       />
 
       {isFetching && !isLoading && (
@@ -165,29 +179,28 @@ export default function ProductList({ storeProduct }) {
 
       {/* ConfirmModal */}
       <ConfirmModal
+        color="success"
         isOpen={isConfirmOpen}
         onClose={onConfirmClose}
-        title="Xác nhận hủy đơn hàng"
+        title="Xác nhận thay đổi trạng thái sản phẩm"
         message={
           orderToConfirm
-            ? `Bạn có chắc muốn hủy đơn "${orderToConfirm.code}" không?`
+            ? `Bạn có chắc muốn thay đổi trạng thái sản phẩm "${orderToConfirm.name}" không?`
             : ""
         }
-        confirmText="Hủy đơn"
+        confirmText="Thay đổi"
         cancelText="Thoát"
         onConfirm={handleConfirmDelete}
       />
 
-      {/* Modal chi tiết đơn hàng */}
+      {/* Modal chi tiết sản phẩm */}
       {isModalOpen && selectedProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          {/* Overlay */}
           <div
             className="absolute inset-0 bg-black/30 backdrop-blur-sm"
             onClick={() => setIsModalOpen(false)}
           ></div>
 
-          {/* Nội dung modal */}
           <div className="relative bg-gradient-to-br from-green-50 via-green-100 to-emerald-200 rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] p-6 z-10 overflow-y-auto animate-fadeIn border-2 border-green-300">
             <h2 className="text-xl font-bold mb-4 text-green-800">
               Chi tiết sản phẩm
@@ -220,22 +233,14 @@ export default function ProductList({ storeProduct }) {
                   size="sm"
                   variant="flat"
                   color={
-                    selectedProduct.status === "pending"
-                      ? "warning"
-                      : selectedProduct.status === "shipping"
-                      ? "primary"
-                      : selectedProduct.status === "Đang bán"
+                    selectedProduct.status === "Đang bán"
                       ? "success"
-                      : "danger"
+                      : "Ngừng bán"
+                      ? "danger"
+                      : "default"
                   }
                 >
-                  {selectedProduct.status === "pending"
-                    ? "Đang xử lý"
-                    : selectedProduct.status === "shipping"
-                    ? "Đang giao"
-                    : selectedProduct.status === "Đang bán"
-                    ? "Đang bán"
-                    : "Đang bán"}
+                  {selectedProduct.status}
                 </Chip>
               </div>
               <div>
@@ -267,12 +272,11 @@ export default function ProductList({ storeProduct }) {
               </div>
             </div>
 
-            {/* Danh sách sản phẩm */}
+            {/* Danh sách biến thể */}
             <h3 className="font-semibold mb-3 text-lg text-green-800">
               Danh sách biến thể
             </h3>
 
-            {/* Danh sách biến thể */}
             <div className="space-y-3">
               {selectedProduct.groupedByColor.map((colorGroup, index) => (
                 <div
@@ -280,17 +284,14 @@ export default function ProductList({ storeProduct }) {
                   className="border border-green-300 rounded-lg bg-white"
                 >
                   <details className="group">
-                    {/* Summary: hiển thị màu + tổng SL + ảnh + mũi tên */}
                     <summary className="cursor-pointer list-none p-3 flex items-center justify-between bg-green-100 hover:bg-green-200 transition rounded-lg">
                       <div className="flex items-center gap-3">
-                        {/* Ảnh đại diện */}
                         <img
                           src={colorGroup.variants[0].image?.url}
                           alt={colorGroup.color}
                           className="w-10 h-10 rounded border object-cover"
                         />
 
-                        {/* Tên màu + tổng SL */}
                         <div>
                           <p className="font-semibold text-green-800 capitalize">
                             {colorGroup.color}
@@ -301,7 +302,6 @@ export default function ProductList({ storeProduct }) {
                         </div>
                       </div>
 
-                      {/* Mũi tên xoay */}
                       <svg
                         className="w-4 h-4 text-green-700 transition-transform duration-300 group-open:rotate-180"
                         fill="none"
@@ -317,92 +317,69 @@ export default function ProductList({ storeProduct }) {
                       </svg>
                     </summary>
 
-                    {/* Nội dung Accordion: chỉ còn Size – Giá – Tồn kho */}
                     <div className="p-3 overflow-x-auto animate-fadeIn">
-                      <div className="p-3 overflow-x-auto animate-fadeIn">
-                        <table className="min-w-full text-sm text-gray-700 table-fixed">
-                          <thead className="bg-green-600 text-white text-left">
-                            <tr>
-                              <th className="w-10 px-4 py-2 text-center">
-                                STT
-                              </th>
-                              <th className="w-20 px-4 py-2 text-center">
-                                Size
-                              </th>
-                              <th className="w-28 px-4 py-2 text-center">
-                                Giá
-                              </th>
-                              <th className="w-20 px-4 py-2 text-center">
-                                Tồn kho
-                              </th>
-                              <th className="w-28 px-4 py-2 text-center">
-                                Trạng thái
-                              </th>
-                              <th className="w-32 px-4 py-2 text-center">
-                                Hành động
-                              </th>
+                      <table className="min-w-full text-sm text-gray-700 table-fixed">
+                        <thead className="bg-green-600 text-white text-left">
+                          <tr>
+                            <th className="w-10 px-4 py-2 text-center">STT</th>
+                            <th className="w-20 px-4 py-2 text-center">Size</th>
+                            <th className="w-28 px-4 py-2 text-center">Giá</th>
+                            <th className="w-20 px-4 py-2 text-center">
+                              Tồn kho
+                            </th>
+                            <th className="w-28 px-4 py-2 text-center">
+                              Trạng thái
+                            </th>
+                            <th className="w-32 px-4 py-2 text-center">
+                              Hành động
+                            </th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          {colorGroup.variants.map((v, idx) => (
+                            <tr
+                              key={idx}
+                              className="border-t border-green-200 hover:bg-emerald-50 transition-colors"
+                            >
+                              <td className="px-2 py-2 text-center font-medium text-emerald-700">
+                                {idx + 1}
+                              </td>
+                              <td className="py-2 text-center font-medium text-emerald-700">
+                                {v.size.size_value}
+                              </td>
+                              <td className="py-2 text-center font-medium text-emerald-700">
+                                {formatCurrency(v.price)}
+                              </td>
+                              <td className="py-2 text-center">{v.quantity}</td>
+                              <td className="py-2 text-center font-medium text-emerald-700">
+                                {v.onDeploy ? "Đang bán" : "Ngừng bán"}
+                              </td>
+                              <td className="py-2 text-center">
+                                <div className="flex justify-center gap-3">
+                                  <Tooltip content="Chỉnh sửa">
+                                    <span className="text-blue-600 cursor-pointer hover:scale-110 transition-transform">
+                                      <Edit2 size={18} />
+                                    </span>
+                                  </Tooltip>
+
+                                  <Tooltip color="danger" content="Ngưng bán">
+                                    <span className="text-red-500 cursor-pointer hover:scale-110 transition-transform">
+                                      <Trash2 size={18} />
+                                    </span>
+                                  </Tooltip>
+                                </div>
+                              </td>
                             </tr>
-                          </thead>
-
-                          <tbody>
-                            {colorGroup.variants.map((v, idx) => (
-                              <tr
-                                key={idx}
-                                className="border-t border-green-200 hover:bg-emerald-50 transition-colors"
-                              >
-                                {/* STT */}
-                                <td className="px-2 py-2 text-center font-medium text-emerald-700">
-                                  {idx + 1}
-                                </td>
-
-                                {/* Size */}
-                                <td className="py-2 text-center font-medium text-emerald-700">
-                                  {v.size.size_value}
-                                </td>
-
-                                {/* Giá */}
-                                <td className="py-2 text-center font-medium text-emerald-700">
-                                  {formatCurrency(v.price)}
-                                </td>
-
-                                {/* Tồn kho */}
-                                <td className="py-2 text-center">
-                                  {v.quantity}
-                                </td>
-
-                                {/* Trạng thái */}
-                                <td className="py-2 text-center font-medium text-emerald-700">
-                                  {v.onDeploy ? "Đang bán" : "Ngưng bán"}
-                                </td>
-
-                                {/* Hành động */}
-                                <td className="py-2 text-center">
-                                  <div className="flex justify-center gap-3">
-                                    <Tooltip content="Chỉnh sửa">
-                                      <span className="text-blue-600 cursor-pointer hover:scale-110 transition-transform">
-                                        <Edit2 size={18} />
-                                      </span>
-                                    </Tooltip>
-
-                                    <Tooltip color="danger" content="Ngưng bán">
-                                      <span className="text-red-500 cursor-pointer hover:scale-110 transition-transform">
-                                        <Trash2 size={18} />
-                                      </span>
-                                    </Tooltip>
-                                  </div>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   </details>
                 </div>
               ))}
             </div>
 
-            {/* Nút đóng */}
             <div className="mt-6 flex justify-end border-t border-green-300 pt-4">
               <Button
                 color="success"

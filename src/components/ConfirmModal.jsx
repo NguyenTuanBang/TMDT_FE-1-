@@ -15,13 +15,14 @@ export default function ConfirmModal({
   confirmText = "Đồng ý",
   cancelText = "Hủy",
   onConfirm,
+  color = "primary",
 }) {
   return (
     <Modal
       isOpen={isOpen}
       onOpenChange={onClose}
       classNames={{
-        backdrop: "bg-black/15",
+        backdrop: "bg-black/80",
       }}
     >
       <ModalContent>
@@ -34,7 +35,7 @@ export default function ConfirmModal({
             {cancelText}
           </Button>
           <Button
-            color="primary"
+            color={color}
             onPress={() => {
               onConfirm?.();
               onClose();

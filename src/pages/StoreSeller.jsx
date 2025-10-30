@@ -16,8 +16,10 @@ import {
   FaBoxOpen,
   FaClipboardList,
 } from "react-icons/fa";
+import { useParams } from "react-router-dom";
 
 function StoreSeller() {
+  const { storeId } = useParams();
   const { data: products } = useProduct();
   const { user } = useAuth();
   const { data: stores } = useStores();
@@ -25,7 +27,10 @@ function StoreSeller() {
 
   if (!stores || !user || !products || !orders) return <div>Đang tải...</div>;
 
-  const store = stores.find((store) => store.user._id === user._id);
+  const store = storeId
+    ? stores.find((store) => store._id === storeId)
+    : stores.find((store) => store.user._id === user._id);
+
   const product = products.filter((product) => product.store_id === store._id);
 
   const ordersOfStore = orders.reduce((acc, order) => {
@@ -155,10 +160,13 @@ function StoreSeller() {
             {
               icon: <FaMapMarkerAlt className="text-blue-500 text-xl" />,
               label: "Địa chỉ",
-              value: store.address
-                .split(",")
-                .map((part) => part.trim())
-                .pop(),
+              value: (() => {
+                if (!store.address) return "";
+                const parts = store.address
+                  .split(",")
+                  .map((part) => part.trim());
+                return parts.length > 0 ? parts[parts.length - 1] : "";
+              })(),
             },
           ].map((info, i) => (
             <div

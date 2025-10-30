@@ -29,10 +29,10 @@ const ListProduct = () => {
   const handlePageChange = (page) => setCurrentPage(page);
   const fetchData = async () => {
     try {
-      // const url = `${import.meta.env.VITE_LOCAL_PORT}/products?page=${currentPage}`;
-      const url = `${
-        import.meta.env.VITE_DEPLOY_PORT
-      }/products?page=${currentPage}`;
+      const url = `${import.meta.env.VITE_LOCAL_PORT}/products?page=${currentPage}`;
+      // const url = `${
+      //   import.meta.env.VITE_DEPLOY_PORT
+      // }/products?page=${currentPage}`;
       const body = { keyword: name, category, price };
       // dùng POST thay cho GET
       const res = await axios.post(url, body);

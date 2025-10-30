@@ -1,14 +1,15 @@
 import { Link } from "react-router-dom";
-import Navbar from "../components/Navbar.jsx";
-import Banner from "../components/ProductBanner.jsx";
-import ProductCard from "../components/ProductCard.jsx";
-import ProductCarousel from "../components/ProductCarousel.jsx";
-import Category from "./Category.jsx";
+import Navbar from "../components/Navbar";
+import Banner from "../components/ProductBanner";
+import ProductCard from "../components/ProductCard";
+import ProductCarousel from "../components/ProductCarousel";
+import Category from "./Category";
 import { useEffect, useState } from "react";
+import api from "../utils/api";
 import axios from "axios";
 
 function Product() {
-  // const products = [
+  
   //   {
   //     _id: "68c5895fe340ec13b0e97a71",
   //     productName: "Nồi cơm điện siêu nhanh",
@@ -131,28 +132,30 @@ function Product() {
   //     description: "Máy sấy tóc 1200W",
   //   },
   // ];
-  const [products, setProducts] = useState([])
-  const [topRating, setTopRating] = useState([])
+  const [products, setProducts] = useState([]);
+  const [topRating, setTopRating] = useState([]);
   useEffect(() => {
     const fetchTopRating = async () => {
-      // const res = await axios.get(`${import.meta.env.VITE_LOCAL_PORT}/products/most-favourite`)
-      const res = await axios.get(`${import.meta.env.VITE_DEPLOY_PORT}/products/most-favourite`)
-      setTopRating(res.data.data)
-    }
+      // const res = await api(`/products/most-favourite`);
+      const res = await axios.get(`${import.meta.env.VITE_LOCAL_PORT}/products/most-favourite`)
+      // const res = await axios.get(`${import.meta.env.VITE_DEPLOY_PORT}/products/most-favourite`)
+      setTopRating(res.data.data);
+    };
     const fetchProduct = async () => {
-      // const res = await axios.post(`${import.meta.env.VITE_LOCAL_PORT}/products`)
-      const res = await axios.post(`${import.meta.env.VITE_DEPLOY_PORT}/products`)
-      setProducts(res.data.data)
-    }
-    fetchTopRating()
-    fetchProduct()
-  },[])
-
+      // const res = await api(`/products/`);
+      const res = await axios.get(`${import.meta.env.VITE_LOCAL_PORT}/products/most-favourite`)
+      // const res = await axios.get(`${import.meta.env.VITE_DEPLOY_PORT}/products/most-favourite`)
+      console.log(res.data.data);
+      setProducts(res.data.data);
+    };
+    fetchTopRating();
+    fetchProduct();
+  }, []);
 
   return (
     <>
       <Navbar />
-      <div className="mt-25 px-6">
+      <div className="mt-40 px-6">
         <Banner />
         <div className="mt-20 px-10">
           <h2 className="text-2xl font-bold mb-4">Danh mục</h2>
@@ -167,7 +170,7 @@ function Product() {
         <h2 className="text-2xl font-bold mb-4 px-10">Sản phẩm hôm nay</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 ml-10">
           {products.map((product) => (
-            <Link to={`/product/${product._id}`}>
+            <Link to={`/products/${product._id}`}>
               <ProductCard key={product._id} product={product} />
             </Link>
           ))}

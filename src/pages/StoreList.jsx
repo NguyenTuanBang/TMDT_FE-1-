@@ -14,7 +14,7 @@ import useOrders from "../hooks/useOrder";
 import useToast from "../hooks/useToast";
 import ConfirmModal from "../components/ConfirmModal";
 import StoreTable from "../components/StoreTable";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import useStores from "../hooks/useStore";
 
 // helper format ngày
@@ -46,7 +46,6 @@ export default function OrderList() {
   });
 
   const { data: stores } = useStores();
-  console.log(stores);
 
   const location = useLocation();
   const orderUser = location.state?.order || null;
@@ -57,6 +56,7 @@ export default function OrderList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const toast = useToast();
+  const navigate = useNavigate();
 
   const { data, isLoading, isFetching } = useOrders();
   const {
@@ -82,9 +82,11 @@ export default function OrderList() {
   );
 
   // Handlers
-  const handleView = (order) => {
-    setSelectedOrder(order);
-    setIsModalOpen(true);
+  const handleView = (store) => {
+    setSelectedOrder(store);
+    console.log(store);
+    console.log(store._id);
+    navigate(`/admin/stores/${store._id}`);
   };
 
   const handleDelete = (order) => {

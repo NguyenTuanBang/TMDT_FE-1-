@@ -8,7 +8,8 @@ import {
 } from "@heroicons/react/24/outline";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
-import useAuth from "../hooks/useAuth.jsx";
+import useAuth from "../hooks/useAuth";
+import { link } from "@heroui/theme";
 
 export default function Sidebar() {
   const [open, setOpen] = useState("Tài Khoản của tôi");
@@ -29,10 +30,7 @@ export default function Sidebar() {
     {
       name: "Lịch sử đơn hàng",
       icon: DocumentTextIcon,
-      children: [
-        { name: "Reports", link: "/orders/reports" },
-        { name: "Performance", link: "/orders/performance" },
-      ],
+      link: "/myaccount/orders",
     },
     { name: "Voucher", icon: TicketIcon, link: "/voucher" },
     { name: "Cài đặt", icon: Cog6ToothIcon, link: "/settings" },
@@ -44,7 +42,7 @@ export default function Sidebar() {
     <div className="h-screen bg-gray-100 border-r border-gray-200 p-4 flex flex-col">
       <div className="mt-auto flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-200 cursor-pointer">
         <img
-          src={user.avatar || `https://api.dicebear.com/9.x/initials/svg?seed=${user.username}`}
+          src={user.avatar}
           alt="User Avatar"
           className="w-10 h-10 rounded-full"
         />

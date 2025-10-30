@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../utils/api.jsx";
+import api from "../utils/api";
 
 function CartDropdown({ store, onCartChange }) {
   const [isOpen, setIsOpen] = useState(true);
@@ -9,17 +9,17 @@ function CartDropdown({ store, onCartChange }) {
   const items = store.Item || [];
 
   // Debug: Log items để xem data
-//   console.log("🔍 CartDropdown - Store:", store._id);
-//   console.log(
-//     "🔍 Items:",
-//     items.map((i) => ({
-//       id: i._id,
-//       unitPrice: i.unitPrice,
-//       finalPrice: i.finalPrice,
-//       discountValue: i.discountValue,
-//       is_chosen: i.is_chosen,
-//     }))
-//   );
+  console.log("🔍 CartDropdown - Store:", store._id);
+  console.log(
+    "🔍 Items:",
+    items.map((i) => ({
+      id: i._id,
+      unitPrice: i.unitPrice,
+      finalPrice: i.finalPrice,
+      discountValue: i.discountValue,
+      is_chosen: i.is_chosen,
+    }))
+  );
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
@@ -98,21 +98,11 @@ function CartDropdown({ store, onCartChange }) {
 
   const [availablePromotions, setAvailablePromotions] = useState([]);
 
-  const fetchPromotions = async () => {
-    try {
-      const res = await api.get(`/promotion/store/${store.store_id._id}`);
-      setAvailablePromotions(res.data.data);
-    } catch (err) {
-      console.error("Lỗi fetch promotions:", err);
-    }
-  };
-
   const handleSelectPromotion = async (promo) => {
     try {
-      await api.post("/cart/add-promotion", { promotion_id: promo._id, cart_Id: store._id });
+      await api.post("/cart/add-promotion", { promotion_id: promo._id });
       setShowPromotionModal(false);
       console.log("Promotion applied:", promo);
-      onCartChange()
     } catch (err) {
       console.error(err);
     }
@@ -234,10 +224,7 @@ function CartDropdown({ store, onCartChange }) {
         {isOpen && items.some((item) => item.is_chosen) && (
           <div
             className="mt-2 p-3 border rounded bg-yellow-50 cursor-pointer hover:bg-yellow-100"
-            onClick={() => {
-                fetchPromotions();
-                setShowPromotionModal(true);
-            }}
+            onClick={() => setShowPromotionModal(true)}
           >
             <p className="font-medium text-yellow-700">
               Áp dụng khuyến mãi: {store.promotion?.name} -{" "}
