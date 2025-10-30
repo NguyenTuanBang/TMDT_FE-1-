@@ -39,7 +39,7 @@ const ProductCarousel = ({ products }) => {
             key={product._id}
             className="flex-shrink-0 w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5"
           >
-            <Link to={`/product/${product._id}`}>
+            <Link to={`/products/${product._id}`}>
               <ProductCard key={product._id} product={product} />
             </Link>
           </div>
