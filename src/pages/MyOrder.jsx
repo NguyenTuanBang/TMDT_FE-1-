@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import useAuth from "../hooks/useAuth";
 import useOrders from "../hooks/useOrder";
 import { FiChevronDown } from "react-icons/fi";
+import { Button } from "antd";
+import axios from "axios";
 
 function MyOrder() {
   const { data: orders } = useOrders();
@@ -23,6 +25,20 @@ function MyOrder() {
 
   const toggleAccordion = (id) => {
     setOpenOrderId(openOrderId === id ? null : id);
+  };
+
+  const handleCancelItem = async (itemId) => {
+    try {
+      // const url = `${import.meta.env.VITE_LOCAL_PORT}/orders/cancel-item`;
+      const url = `${import.meta.env.VITE_DEPLOY_PORT}/orders/cancel-item`;
+      const res = await axios.post(url, { itemId });
+      if (res.data.success) {
+        // Cập nhật lại danh sách đơn hàng
+        setOpenOrderId(null);
+      }
+    } catch (error) {
+      console.error("Error cancelling item:", error);
+    }
   };
 
   const formatCurrency = (amount) => amount?.toLocaleString("vi-VN") + " đ";
@@ -107,7 +123,13 @@ function MyOrder() {
                     </p>
                     <p>
                       <span className="font-semibold">Trạng thái:</span>{" "}
-                      {order.status || "Chưa cập nhật"}
+                      {order.status === "Pending"
+                        ? "Đang xử lý"
+                        : order.status === "Cancelled"
+                        ? "Đã hủy"
+                        : order.status === "Successful"
+                        ? "Đã giao hàng"
+                        : "Chưa cập nhật"}
                     </p>
                     <p className="sm:col-span-2">
                       <span className="font-semibold">Địa chỉ:</span>{" "}
@@ -182,6 +204,15 @@ function MyOrder() {
                               </div>
 
                               <div className="flex flex-col items-end justify-end ml-4 text-blue-600 font-medium">
+                                {item.status === "Pending" && (
+                                  <Button
+                                    type="primary"
+                                    danger
+                                    onClick={() => handleCancelItem(item._id)}
+                                  >
+                                    Hủy hàng
+                                  </Button>
+                                )}
                                 <p>
                                   <span className="font-semibold text-gray-700">
                                     Số lượng:

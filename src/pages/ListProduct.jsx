@@ -29,10 +29,10 @@ const ListProduct = () => {
   const handlePageChange = (page) => setCurrentPage(page);
   const fetchData = async () => {
     try {
-      const url = `${import.meta.env.VITE_LOCAL_PORT}/products?page=${currentPage}`;
-      // const url = `${
-      //   import.meta.env.VITE_DEPLOY_PORT
-      // }/products?page=${currentPage}`;
+      // const url = `${import.meta.env.VITE_LOCAL_PORT}/products?page=${currentPage}`;
+      const url = `${
+        import.meta.env.VITE_DEPLOY_PORT
+      }/products?page=${currentPage}`;
       const body = { keyword: name, category, price };
       // dùng POST thay cho GET
       const res = await axios.post(url, body);
@@ -85,7 +85,7 @@ const ListProduct = () => {
         {/* Danh sách sản phẩm */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 ml-10">
           {data.map((item) => (
-            <Link key={item._id} to={`/product/${item._id}`}>
+            <Link key={item._id} to={`/products/${item._id}`}>
               <ProductCard product={item} />
             </Link>
           ))}

@@ -137,14 +137,14 @@ function Product() {
   useEffect(() => {
     const fetchTopRating = async () => {
       // const res = await api(`/products/most-favourite`);
-      const res = await axios.get(`${import.meta.env.VITE_LOCAL_PORT}/products/most-favourite`)
-      // const res = await axios.get(`${import.meta.env.VITE_DEPLOY_PORT}/products/most-favourite`)
+      // const res = await axios.get(`${import.meta.env.VITE_LOCAL_PORT}/products/most-favourite`)
+      const res = await axios.get(`${import.meta.env.VITE_DEPLOY_PORT}/products/most-favourite`)
       setTopRating(res.data.data);
     };
     const fetchProduct = async () => {
       // const res = await api(`/products/`);
-      const res = await axios.get(`${import.meta.env.VITE_LOCAL_PORT}/products/most-favourite`)
-      // const res = await axios.get(`${import.meta.env.VITE_DEPLOY_PORT}/products/most-favourite`)
+      // const res = await axios.get(`${import.meta.env.VITE_LOCAL_PORT}/products/most-favourite`)
+      const res = await axios.get(`${import.meta.env.VITE_DEPLOY_PORT}/products/most-favourite`)
       console.log(res.data.data);
       setProducts(res.data.data);
     };
