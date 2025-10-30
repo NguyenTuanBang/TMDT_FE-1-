@@ -4,6 +4,7 @@ import useOrders from "../hooks/useOrder";
 import { FiChevronDown } from "react-icons/fi";
 import { Button } from "antd";
 import axios from "axios";
+import api from "../utils/api";
 
 function MyOrder() {
   const { data: orders } = useOrders();
@@ -22,6 +23,19 @@ function MyOrder() {
         Bạn chưa có đơn hàng nào.
       </p>
     );
+  
+  const handleConfirmItem = async (itemId) => {
+    try {
+      const url = `/orders/confirm`;
+      const res = await api.post(url, { orderItemId: itemId });
+      if (res.data.success) {
+        // Cập nhật lại danh sách đơn hàng
+        setOpenOrderId(null);
+      }
+    } catch (error) {
+      console.error("Error confirming item:", error);
+    }
+  };
 
   const toggleAccordion = (id) => {
     setOpenOrderId(openOrderId === id ? null : id);
@@ -29,9 +43,8 @@ function MyOrder() {
 
   const handleCancelItem = async (itemId) => {
     try {
-      // const url = `${import.meta.env.VITE_LOCAL_PORT}/orders/cancel-item`;
-      const url = `${import.meta.env.VITE_DEPLOY_PORT}/orders/cancel-item`;
-      const res = await axios.post(url, { itemId });
+      const url = `/orders/cancel`;
+      const res = await api.post(url, { orderItemId: itemId });
       if (res.data.success) {
         // Cập nhật lại danh sách đơn hàng
         setOpenOrderId(null);
@@ -204,13 +217,26 @@ function MyOrder() {
                               </div>
 
                               <div className="flex flex-col items-end justify-end ml-4 text-blue-600 font-medium">
-                                {item.status === "Pending" && (
+                                {item.status === "PENDING" && (
                                   <Button
                                     type="primary"
                                     danger
                                     onClick={() => handleCancelItem(item._id)}
                                   >
                                     Hủy hàng
+                                  </Button>
+                                )}
+                                {item.status === "CANCELLED" && (
+                                  <span className="text-red-600 font-bold">
+                                    Đã hủy
+                                  </span>
+                                )}
+                                {item.status === "COMFIRMED" && (
+                                  <Button
+                                    type="primary"
+                                    onClick={() => handleConfirmItem(item._id)}
+                                  >
+                                    Xác nhận
                                   </Button>
                                 )}
                                 <p>
