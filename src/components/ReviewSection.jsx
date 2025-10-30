@@ -3,8 +3,10 @@ import ReviewForm from "./ReviewForm";
 import ReviewOverview from "./ReviewOverview";
 import api from "../utils/api";
 import { FaStar } from "react-icons/fa";
+import useAuth from "../hooks/useAuth";
 
 function ReviewSection({ id }) {
+  const {user} = useAuth();
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
@@ -101,8 +103,8 @@ function ReviewSection({ id }) {
           )}
         </>
       )}
-
-      <ReviewForm />
+      {user && <ReviewForm />}
+      {/* <ReviewForm /> */}
 
       {selectedImage && (
         <div

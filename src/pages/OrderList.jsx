@@ -218,7 +218,13 @@ export default function OrderList() {
               </p>
 
               <p>
-                <strong>Trạng thái:</strong> {selectedOrder.status}
+                <strong>Trạng thái:</strong> {selectedOrder.status === "Pending"
+                        ? "Đang xử lý"
+                        : selectedOrder.status === "Cancelled"
+                        ? "Đã hủy"
+                        : selectedOrder.status === "Successful"
+                        ? "Hoàn thành"
+                        : "Chưa cập nhật"}
               </p>
               <p>
                 <strong>Ngày đặt:</strong> {formatDate(selectedOrder.createdAt)}
@@ -247,6 +253,7 @@ export default function OrderList() {
                       Số lượng
                     </th>
                     <th className="py-3 px-4 text-center font-semibold">Giá</th>
+                    <th className="py-3 px-4 text-center font-semibold">Trạng thái</th>
                     <th className="py-3 px-4 text-center font-semibold">
                       Thành tiền
                     </th>
@@ -260,7 +267,7 @@ export default function OrderList() {
                       {/* Tên cửa hàng */}
                       <tr className="bg-amber-100">
                         <td
-                          colSpan="5"
+                          colSpan="6"
                           className="py-3 px-4 font-semibold text-amber-800 border-y border-amber-300"
                         >
                           {store.store.name}
@@ -310,6 +317,15 @@ export default function OrderList() {
                           {/* Giá */}
                           <td className="py-3 px-4 text-center text-gray-700">
                             {item.variant_id.price?.toLocaleString("vi-VN")} đ
+                          </td>
+                          <td className="py-3 px-4 text-center text-gray-700">
+                            {item.status === "PENDING"
+                              ? "Đang xử lý"
+                              : item.status === "CANCELLED"
+                              ? "Đã hủy"
+                              : item.status === "DELIVERED"
+                              ? "Hoàn thành"
+                              : "Chưa cập nhật"}
                           </td>
 
                           {/* Thành tiền */}

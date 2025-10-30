@@ -13,10 +13,10 @@ import {
 import { EyeIcon, Trash2Icon } from "lucide-react";
 
 const statusColorMap = {
-  completed: "success",
-  pending: "warning",
-  shipping: "primary",
-  cancelled: "danger",
+  Pending: "warning",
+  Confirmed: "primary",
+  Cancelled: "danger",
+  Successful: "success"
 };
 
 export default function OrderTable({ columns, data = [], onView, onDelete }) {
@@ -55,11 +55,11 @@ export default function OrderTable({ columns, data = [], onView, onDelete }) {
                 color={statusColorMap[order.status]}
                 className="capitalize"
               >
-                {order.status === "pending"
+                {order.status === "Pending"
                   ? "Đang xử lý"
-                  : order.status === "shipping"
+                  : order.status === "Confirmed"
                   ? "Đang giao"
-                  : order.status === "completed"
+                  : order.status === "Successful"
                   ? "Hoàn thành"
                   : "Đã hủy"}
               </Chip>
