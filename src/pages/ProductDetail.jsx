@@ -31,6 +31,10 @@ function ProductDetail() {
     fetchData();
   }, [id]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const colors = [...new Set(product.variants.map(v => v.image.color))];
   const sizes = [...new Set(product.variants.map(v => v.size.size_value))];
   const images = [...new Set(product.variants.map(v => v.image.url))];
@@ -161,7 +165,7 @@ function ProductDetail() {
   return (
     <>
       <Navbar />
-      <div className="px-40 mt-40">
+      <div className="px-40 mt-30">
         <div className="flex gap-20">
           <div className="flex flex-col items-center">
             <img
@@ -186,7 +190,7 @@ function ProductDetail() {
             </div>
           </div>
 
-          <div className="flex-1">
+                   <div className="flex-1">
             <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
             <div className="mt-4 flex items-center gap-4 text-gray-700">
               <div className="flex items-center gap-1">
@@ -195,38 +199,42 @@ function ProductDetail() {
                     ? product.rating.toFixed(1)
                     : "0.0"}
                 </span>
+
                 <div className="flex">{renderStars()}</div>
               </div>
+
               <span className="text-gray-400">|</span>
               <div className="text-sm">{product.countRating} lượt đánh giá</div>
               <span className="text-gray-400">|</span>
               <div className="text-sm">Đã bán: {product.tradedCount}</div>
             </div>
-            <p className="mt-4 text-gray-700">{product.description}</p>
 
             <div className="mt-4">
-              <p className="font-semibold mb-2">
-                Hàng tồn kho: <span className="text-gray-700">{selectedVariant ? selectedVariant.quantity : displayQuantity}</span>
+              <p className="font-semibold text-gray-800 text-lg mb-2">
+                <span className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-indigo-600 text-transparent bg-clip-text drop-shadow-sm">
+                  {display.toLocaleString("vi-VN")}₫
+                </span>
               </p>
             </div>
-            <div className="mt-4">
-              <p className="font-semibold mb-2">
-                Giá: <span className="text-gray-700">{display.toLocaleString("vi-VN")} VNĐ</span>
-              </p>
-            </div>
+
+            <p className="mt-4 text-gray-700">{product.description}</p>
 
             {/* Chọn màu */}
             <div className="mt-4">
               <p className="font-semibold mb-2">Chọn màu:</p>
               <div className="flex gap-2">
-                {colors.map(color => {
+                {colors.map((color) => {
                   const isValid = validColors.includes(color);
                   return (
                     <button
                       key={color}
                       onClick={() => handleSelectColor(color)}
                       className={`px-4 py-2 rounded border cursor-pointer 
-                        ${selectedColor === color ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-700 border-gray-300"}
+                        ${
+                          selectedColor === color
+                            ? "bg-blue-600 text-white border-blue-600"
+                            : "bg-white text-gray-700 border-gray-300"
+                        }
                         ${!isValid ? "opacity-50" : ""}
                       `}
                     >
@@ -241,14 +249,18 @@ function ProductDetail() {
             <div className="mt-4">
               <p className="font-semibold mb-2">Chọn size:</p>
               <div className="flex gap-2">
-                {sizes.map(size => {
+                {sizes.map((size) => {
                   const isValid = validSizes.includes(size);
                   return (
                     <button
                       key={size}
                       onClick={() => handleSelectSize(size)}
                       className={`px-4 py-2 rounded border cursor-pointer
-                        ${selectedSize === size ? "bg-blue-600 text-white border-blue-600" : "bg-white text-gray-700 border-gray-300"}
+                        ${
+                          selectedSize === size
+                            ? "bg-blue-600 text-white border-blue-600"
+                            : "bg-white text-gray-700 border-gray-300"
+                        }
                         ${!isValid ? "opacity-50" : ""}
                       `}
                     >
@@ -263,28 +275,48 @@ function ProductDetail() {
             <div className="mt-4 flex items-center gap-3">
               <p className="font-semibold">Số lượng:</p>
               <div className="flex items-center border border-gray-300 rounded overflow-hidden">
-                <button onClick={decreaseQuantity} className="w-10 h-10 flex items-center justify-center text-gray-700 hover:bg-blue-50 transition font-bold text-lg">-</button>
+                <button
+                  onClick={decreaseQuantity}
+                  className="w-10 h-10 flex items-center justify-center text-gray-700 hover:bg-blue-50 transition font-bold text-lg"
+                >
+                  -
+                </button>
                 <span className="w-12 text-center font-medium">{quantity}</span>
-                <button onClick={increaseQuantity} className="w-10 h-10 flex items-center justify-center text-gray-700 hover:bg-blue-50 transition font-bold text-lg">+</button>
+                <button
+                  onClick={increaseQuantity}
+                  className="w-10 h-10 flex items-center justify-center text-gray-700 hover:bg-blue-50 transition font-bold text-lg"
+                >
+                  +
+                </button>
               </div>
             </div>
 
-            
+            {user ? (
               <div className="mt-6 flex gap-4">
-                <button className="flex-1 border-2 border-blue-600 text-blue-600 px-6 py-3 rounded hover:bg-blue-50 transition font-medium"
-                  onClick={() => {
-                    user ? addToCart() : navigate("/authen/login")                   
-                    }}>
+                <button
+                  className="flex-1 border-2 border-blue-600 text-blue-600 px-6 py-3 rounded hover:bg-blue-50 transition font-medium"
+                  onClick={() => addToCart()}
+                >
                   Thêm vào giỏ hàng
                 </button>
 
-                <button className="flex-1 bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 transition font-medium"
-                  onClick={() => user ? buyNow() : navigate("/authen/login")}>
+                <button
+                  className="flex-1 bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 transition font-medium"
+                  onClick={() => buyNow()}
+                >
                   Mua ngay
                 </button>
               </div>
-            
-
+            ) : (
+              <div className="mt-6 flex gap-4">
+                <button
+                  className="flex-1 border-2 border-green-600 text-green-600 px-6 py-3 rounded hover:bg-blue-50 transition font-medium"
+                  onClick={() => navigate("/authen/login")}
+                >
+                  Đăng nhập để mua hàng
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div >
