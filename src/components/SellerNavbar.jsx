@@ -59,8 +59,55 @@ function Navbar() {
           {/* RIGHT: Notifications + Language + User */}
           <div className="flex items-center gap-4">
             {/* Notifications */}
-            <div className="p-4">
-              <NotificationDropdown />
+            <div
+              className="relative flex items-center gap-2 px-3 py-1 rounded-lg hover:bg-white/20 transition cursor-pointer"
+              onClick={handleToggleDropdown}
+            >
+              <div className="relative flex items-center justify-center w-8 h-8">
+                <BellIcon className="w-6 h-6 text-white" />
+                {/* <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-md">
+                  3
+                </span> */}
+              </div>
+              <span className="text-white font-medium">Thông báo</span>
+              {openDropdown && (
+                <div
+                  ref={dropdownRef}
+                  className="absolute right-0 top-full mt-2 w-80 bg-white rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto"
+                >
+                  <div className="p-3 border-b font-semibold text-gray-800">
+                    Thông báo
+                  </div>
+
+                  {loading ? (
+                    <div className="p-4 text-center text-gray-500">
+                      Đang tải...
+                    </div>
+                  ) : error ? (
+                    <div className="p-4 text-center text-red-500">{error}</div>
+                  ) : notifications.length === 0 ? (
+                    <div className="p-4 text-center text-gray-500">
+                      Không có thông báo nào
+                    </div>
+                  ) : (
+                    <div className="m-3 border border-gray-200 rounded-lg p-2 bg-gray-50">
+                      {notifications.map((noti, idx) => (
+                        <div
+                          key={idx}
+                          className="px-4 py-3 hover:bg-gray-100 cursor-pointer transition rounded-md"
+                        >
+                          <div className="font-semibold text-gray-800">
+                            {noti.title}
+                          </div>
+                          <div className="text-sm text-gray-600 mt-1 line-clamp-2">
+                            {noti.content}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Language */}
