@@ -13,15 +13,20 @@ import useAddress from "../hooks/useAdress.jsx";
 import useToast from "../hooks/useToast.jsx";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import {  useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const Order = () => {
   const user = useAuth();
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [provinces, setProvinces] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [wards, setWards] = useState([]);
+  const { addAddress } = useAddress();
   const [chosenAddress, setChosenAddress] = useState({});
   const [listAddress, setListAdress] = useState([]);
   const [preOrder, setPreOrder] = useState({});
   const [isAddressDropdownOpen, setIsAddressDropdownOpen] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const fetchData = async () => {
@@ -29,6 +34,9 @@ const Order = () => {
     const resAddress = res.data.data;
     setListAdress(resAddress.filter((item) => item.isDefault === false));
     setChosenAddress(resAddress.find((item) => item.isDefault));
+    if (resAddress.length === 0) {
+      handleOpen(); // Gọi modal mở form
+    }
   };
   useEffect(() => {
     fetchData();
@@ -36,11 +44,11 @@ const Order = () => {
 
   const fetchPreOrder = async (addressId) => {
     if (chosenAddress) {
-      await api.post("/cart/shippingFee", { addressId});
+      await api.post("/cart/shippingFee", { addressId });
       const res = await api.get("/cart/preOrder");
       setPreOrder(res.data.data);
-    }else{
-      handleOpen()
+    } else {
+      handleOpen();
     }
   };
   useEffect(() => {
@@ -58,29 +66,23 @@ const Order = () => {
     setIsAddressDropdownOpen(false);
   };
 
-  const onPayment = async ()=>{
-    onPaymentMutation.mutate()
-  }
+  const onPayment = async () => {
+    onPaymentMutation.mutate();
+  };
   const onPaymentMutation = useMutation({
-      mutationFn: async () => {
-        return await api.post('/orders', {address: chosenAddress._id})
-      },
-      onSuccess: () => {
-        toast.success("Thành công", "Vui lòng ấn vào giỏ hàng để xem thêm")
-        navigate("/")
-        queryClient.invalidateQueries(["cartCount"]);
-      },
-      onError: (err) => {
-        toast.error("Lỗi", "Vui lòng thử lại");
-        console.error(err);
-      },
-    });
-
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const [provinces, setProvinces] = useState([]);
-  const [districts, setDistricts] = useState([]);
-  const [wards, setWards] = useState([]);
-  const { addAddress } = useAddress();
+    mutationFn: async () => {
+      return await api.post("/orders", { address: chosenAddress._id });
+    },
+    onSuccess: () => {
+      toast.success("Thành công", "Vui lòng ấn vào giỏ hàng để xem thêm");
+      navigate("/");
+      queryClient.invalidateQueries(["cartCount"]);
+    },
+    onError: (err) => {
+      toast.error("Lỗi", "Vui lòng thử lại");
+      console.error(err);
+    },
+  });
 
   const toast = useToast();
 
@@ -168,7 +170,7 @@ const Order = () => {
         resetForm();
         onOpenChange(false);
         fetchData();
-        setIsAddressDropdownOpen(false)
+        setIsAddressDropdownOpen(false);
         toast.success("Thành công", "Bạn đã thêm một địa chỉ mới");
       },
       onError: (err) => {
@@ -178,143 +180,143 @@ const Order = () => {
   };
 
   const formNewAddress = () => {
-    return(
-    <Formik
-      initialValues={{
-        name: "",
-        phone: "",
-        detail: "",
-        province: "",
-        district: "",
-        ward: "",
-      }}
-      validationSchema={validationSchema}
-      onSubmit={handleSubmit}
-    >
-      {({ handleSubmit }) => (
-        <Form id="address-form" onSubmit={handleSubmit}>
-          <CustomModal
-            isOpen={isOpen}
-            onClose={onOpenChange}
-            title="Nhập thông tin địa chỉ"
-            confirmText="Lưu"
-            cancelText="Đóng"
-            formId="address-form"
-          >
-            <div>
-              <Field
-                as={Input}
-                name="name"
-                label="Tên"
-                placeholder="Nhập tên của bạn"
-                variant="bordered"
-              />
-              <ErrorMessage
-                name="name"
-                component="div"
-                className="text-red-500 text-sm"
-              />
-            </div>
-
-            <div>
-              <Field
-                as={Input}
-                name="phone"
-                label="Số điện thoại"
-                placeholder="Nhập số điện thoại"
-                variant="bordered"
-              />
-              <ErrorMessage
-                name="phone"
-                component="div"
-                className="text-red-500 text-sm"
-              />
-            </div>
-
-            <div>
-              <Field name="province">
-                {({ field, form }) => (
-                  <CustomSelect
-                    label="Tỉnh/Thành phố"
-                    placeholder="Chọn tỉnh"
-                    options={provinces}
-                    value={field.value}
-                    onChange={(val) => {
-                      form.setFieldValue("province", val);
-                      fetchDistricts(val, form.setFieldValue);
-                    }}
-                    error={
-                      form.errors.province && form.touched.province
-                        ? form.errors.province
-                        : null
-                    }
-                  />
-                )}
-              </Field>
-            </div>
-
-            <div>
-              <Field name="district">
-                {({ field, form }) => (
-                  <CustomSelect
-                    label="Quận/Huyện"
-                    placeholder="Chọn quận/huyện"
-                    options={districts}
-                    value={field.value}
-                    onChange={(val) => {
-                      form.setFieldValue("district", val);
-                      fetchWards(val, form.setFieldValue);
-                    }}
-                    error={
-                      form.errors.district && form.touched.district
-                        ? form.errors.district
-                        : null
-                    }
-                  />
-                )}
-              </Field>
-            </div>
-
-            <div>
-              <Field name="ward">
-                {({ field, form }) => (
-                  <CustomSelect
-                    label="Xã/Phường"
-                    placeholder="Chọn xã/phường"
-                    options={wards}
-                    value={field.value}
-                    onChange={(val) => form.setFieldValue("ward", val)}
-                    error={
-                      form.errors.ward && form.touched.ward
-                        ? form.errors.ward
-                        : null
-                    }
-                  />
-                )}
-              </Field>
-            </div>
-
-            <div>
+    return (
+      <Formik
+        initialValues={{
+          name: "",
+          phone: "",
+          detail: "",
+          province: "",
+          district: "",
+          ward: "",
+        }}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        {({ handleSubmit }) => (
+          <Form id="address-form" onSubmit={handleSubmit}>
+            <CustomModal
+              isOpen={isOpen}
+              onClose={onOpenChange}
+              title="Nhập thông tin địa chỉ"
+              confirmText="Lưu"
+              cancelText="Đóng"
+              formId="address-form"
+            >
               <div>
                 <Field
                   as={Input}
-                  name="detail"
-                  label="Nhập địa chỉ cụ thể"
-                  placeholder="Nhập địa chỉ cụ thể của bạn"
+                  name="name"
+                  label="Tên"
+                  placeholder="Nhập tên của bạn"
                   variant="bordered"
                 />
                 <ErrorMessage
-                  name="detail"
+                  name="name"
                   component="div"
                   className="text-red-500 text-sm"
                 />
               </div>
-            </div>
-          </CustomModal>
-        </Form>
-      )}
-    </Formik>
-    )
+
+              <div>
+                <Field
+                  as={Input}
+                  name="phone"
+                  label="Số điện thoại"
+                  placeholder="Nhập số điện thoại"
+                  variant="bordered"
+                />
+                <ErrorMessage
+                  name="phone"
+                  component="div"
+                  className="text-red-500 text-sm"
+                />
+              </div>
+
+              <div>
+                <Field name="province">
+                  {({ field, form }) => (
+                    <CustomSelect
+                      label="Tỉnh/Thành phố"
+                      placeholder="Chọn tỉnh"
+                      options={provinces}
+                      value={field.value}
+                      onChange={(val) => {
+                        form.setFieldValue("province", val);
+                        fetchDistricts(val, form.setFieldValue);
+                      }}
+                      error={
+                        form.errors.province && form.touched.province
+                          ? form.errors.province
+                          : null
+                      }
+                    />
+                  )}
+                </Field>
+              </div>
+
+              <div>
+                <Field name="district">
+                  {({ field, form }) => (
+                    <CustomSelect
+                      label="Quận/Huyện"
+                      placeholder="Chọn quận/huyện"
+                      options={districts}
+                      value={field.value}
+                      onChange={(val) => {
+                        form.setFieldValue("district", val);
+                        fetchWards(val, form.setFieldValue);
+                      }}
+                      error={
+                        form.errors.district && form.touched.district
+                          ? form.errors.district
+                          : null
+                      }
+                    />
+                  )}
+                </Field>
+              </div>
+
+              <div>
+                <Field name="ward">
+                  {({ field, form }) => (
+                    <CustomSelect
+                      label="Xã/Phường"
+                      placeholder="Chọn xã/phường"
+                      options={wards}
+                      value={field.value}
+                      onChange={(val) => form.setFieldValue("ward", val)}
+                      error={
+                        form.errors.ward && form.touched.ward
+                          ? form.errors.ward
+                          : null
+                      }
+                    />
+                  )}
+                </Field>
+              </div>
+
+              <div>
+                <div>
+                  <Field
+                    as={Input}
+                    name="detail"
+                    label="Nhập địa chỉ cụ thể"
+                    placeholder="Nhập địa chỉ cụ thể của bạn"
+                    variant="bordered"
+                  />
+                  <ErrorMessage
+                    name="detail"
+                    component="div"
+                    className="text-red-500 text-sm"
+                  />
+                </div>
+              </div>
+            </CustomModal>
+          </Form>
+        )}
+      </Formik>
+    );
   };
 
   return (
@@ -360,13 +362,12 @@ const Order = () => {
                       </p>
                     </div>
                   ))
-              ) : (
+              ) : null}
                 <div className="p-3 text-center text-blue-500 cursor-pointer hover:underline">
                   <Button color="primary" onPress={handleOpen}>
                     + Thêm địa chỉ mới
                   </Button>
                 </div>
-              )}
             </div>
           )}
         </div>

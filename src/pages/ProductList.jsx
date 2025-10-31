@@ -15,6 +15,7 @@ import useToast from "../hooks/useToast";
 import ConfirmModal from "../components/ConfirmModal";
 import ProductTable from "../components/ProductTable";
 import FormCreateProduct from "../components/FormCreateProduct";
+import FormEditVariant from "../components/FormEditVariant";
 
 // helper format tiền
 function formatCurrency(amount) {
@@ -40,6 +41,9 @@ export default function ProductList({ storeProduct }) {
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [variantId, setVariantId] = useState(null);
+
   const [selectedProduct, setSelectedProduct] = useState(null);
   const toast = useToast();
   const { mutate: changeStatus } = useChangeProductStatus();
@@ -52,7 +56,10 @@ export default function ProductList({ storeProduct }) {
   } = useDisclosure();
 
   const [orderToConfirm, setOrderToConfirm] = useState(null);
-
+  const handleEdit = (variantId) => {
+    setVariantId(variantId);
+    setIsOpen(true);
+  }
   useEffect(() => {
     const delay = setTimeout(() => {
       setFilters((prev) => ({ ...prev, search: inputSearch, page: 1 }));
@@ -359,7 +366,7 @@ export default function ProductList({ storeProduct }) {
                                 <div className="flex justify-center gap-3">
                                   <Tooltip content="Chỉnh sửa">
                                     <span className="text-blue-600 cursor-pointer hover:scale-110 transition-transform">
-                                      <Edit2 size={18} />
+                                      <Edit2 size={18} onClick={() => handleEdit(v._id)} />
                                     </span>
                                   </Tooltip>
 
@@ -392,6 +399,7 @@ export default function ProductList({ storeProduct }) {
           </div>
         </div>
       )}
+      <FormEditVariant open={isOpen} setOpen={setIsOpen} id={variantId} />
     </div>
   );
 }

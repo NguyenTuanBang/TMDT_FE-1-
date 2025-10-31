@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import api from "../utils/api.jsx";
 import axios from "axios";
 import { useCartCount } from "../hooks/useCartCount.jsx";
+import NotificationDropdown from "./Notification.jsx";
 
 function Navbar() {
   const { user } = useAuth();
@@ -41,10 +42,10 @@ function Navbar() {
     const fetchData = async () => {
       try {
         const res = await axios.get(
-          // `${
-          //   import.meta.env.VITE_LOCAL_PORT
-          // }/products/search?keyword=${keyword}`
-          `${import.meta.env.VITE_DEPLOY_PORT}/products/search?keyword=${keyword}`
+          `${
+            import.meta.env.VITE_LOCAL_PORT
+          }/products/search?keyword=${keyword}`
+          // `${import.meta.env.VITE_DEPLOY_PORT}/products/search?keyword=${keyword}`
         );
         setResults(res.data.data);
         setTotalCount(res.data.totalResults);
@@ -170,7 +171,7 @@ function Navbar() {
                           key={item._id}
                           className="flex items-center gap-3 p-3 hover:bg-gray-100 cursor-pointer"
                           onClick={() => {
-                            navigate(`/product/${item._id}`);
+                            navigate(`/products/${item._id}`);
                             setShowDropdown(false);
                             setKeyword("");
                           }}
@@ -208,14 +209,11 @@ function Navbar() {
           </div>
 
           <div className="flex items-center">
-            <div className="relative flex items-center gap-2 px-3 py-1 rounded-lg hover:bg-white/20 transition cursor-pointer">
+            <div className="relative flex items-center gap-2 px-3 py-1 rounded-lg transition cursor-pointer">
               <div className="relative flex items-center justify-center w-8 h-8">
-                <BellIcon className="w-6 h-6 text-white" />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-md">
-                  3
-                </span>
+                {/* <BellIcon className="w-6 h-6 text-white" /> */}
+                <NotificationDropdown />
               </div>
-              <span className="text-white font-medium">Thông báo</span>
             </div>
 
             <div className="p-6">

@@ -13,11 +13,22 @@ const ListProduct = () => {
   const name = queryParams.get("name");
   const tag = queryParams.get("category");
   const [currentPage, setCurrentPage] = useState(1);
+
+  // State dùng thật để fetch
   const [category, setCategory] = useState([]);
   const [price, setPrice] = useState({ min: 0, max: Number.MAX_SAFE_INTEGER });
+
+  // State tạm cho Drawer (draft)
+  const [categoryDraft, setCategoryDraft] = useState([]);
+  const [priceDraft, setPriceDraft] = useState({
+    min: 0,
+    max: Number.MAX_SAFE_INTEGER,
+  });
+
   useEffect(() => {
     if (tag) {
-      setCategory([tag]); 
+      setCategory([tag]);
+      setCategoryDraft([tag]);
     }
   }, [tag]);
 
@@ -29,10 +40,12 @@ const ListProduct = () => {
   const handlePageChange = (page) => setCurrentPage(page);
   const fetchData = async () => {
     try {
-      // const url = `${import.meta.env.VITE_LOCAL_PORT}/products?page=${currentPage}`;
       const url = `${
-        import.meta.env.VITE_DEPLOY_PORT
+        import.meta.env.VITE_LOCAL_PORT
       }/products?page=${currentPage}`;
+      // const url = `${
+      //   import.meta.env.VITE_DEPLOY_PORT
+      // }/products?page=${currentPage}`;
       const body = { keyword: name, category, price };
       // dùng POST thay cho GET
       const res = await axios.post(url, body);
@@ -44,13 +57,6 @@ const ListProduct = () => {
   };
 
   useEffect(() => {
-    // const fetchData = async () => {
-    //   let url = `${import.meta.env.VITE_LOCAL_PORT}/products?page=${currentPage}`;
-    //   if (name) url += `&name=${name}`;
-    //   const response = await axios.get(url);
-    //   setData(response.data.data);
-    //   setTotal(response.data.numberOfPages);
-    // };
     fetchData();
   }, [currentPage, name, category, price]);
 
@@ -75,20 +81,30 @@ const ListProduct = () => {
           <FilterDrawer
             open={open}
             setOpen={setOpen}
-            category={category}
-            setCategory={setCategory}
-            price={price}
-            setPrice={setPrice}
+            category={categoryDraft}
+            setCategory={setCategoryDraft}
+            price={priceDraft}
+            setPrice={setPriceDraft}
+            onApply={() => {
+              setCategory(categoryDraft);
+              setPrice(priceDraft);
+            }}
           />
         </div>
 
         {/* Danh sách sản phẩm */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 ml-10">
-          {data.map((item) => (
-            <Link key={item._id} to={`/products/${item._id}`}>
-              <ProductCard product={item} />
-            </Link>
-          ))}
+          {data.length > 0 ? (
+            data.map((item) => (
+              <Link key={item._id} to={`/products/${item._id}`}>
+                <ProductCard product={item} />
+              </Link>
+            ))
+          ) : (
+            <div className="col-span-full text-center py-10 text-gray-500 text-lg">
+              Không có sản phẩm tương ứng
+            </div>
+          )}
         </div>
 
         {/* Phân trang */}

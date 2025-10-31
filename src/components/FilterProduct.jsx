@@ -9,6 +9,7 @@ const FilterDrawer = ({
   setPrice,
   open,
   setOpen,
+  onApply
 }) => {
   const [tags, setTags] = useState([]);
 
@@ -16,8 +17,8 @@ const FilterDrawer = ({
     const fetchTags = async () => {
       try {
         const res = await axios.get(
-          // `${import.meta.env.VITE_LOCAL_PORT}/allTags`
-          `${import.meta.env.VITE_DEPLOY_PORT}/allTags`
+          `${import.meta.env.VITE_LOCAL_PORT}/allTags`
+          // `${import.meta.env.VITE_DEPLOY_PORT}/allTags`
         );
         setTags(res.data.data || []);
       } catch (err) {
@@ -55,7 +56,7 @@ const FilterDrawer = ({
       message.error("Giá trị tối thiểu phải nhỏ hơn hoặc bằng giá trị tối đa!");
       return;
     }
-
+    onApply();
     setOpen(false);
     console.log("Áp dụng filter:");
     console.log("Danh mục:", category);

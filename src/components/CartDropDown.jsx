@@ -96,17 +96,17 @@ function CartDropdown({ store, onCartChange }) {
     }
   };
 
-  const [availablePromotions, setAvailablePromotions] = useState([]);
+  // const [availablePromotions, setAvailablePromotions] = useState([]);
 
-  const handleSelectPromotion = async (promo) => {
-    try {
-      await api.post("/cart/add-promotion", { promotion_id: promo._id });
-      setShowPromotionModal(false);
-      console.log("Promotion applied:", promo);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  // const handleSelectPromotion = async (promo) => {
+  //   try {
+  //     await api.post("/cart/add-promotion", { promotion_id: promo._id });
+  //     setShowPromotionModal(false);
+  //     console.log("Promotion applied:", promo);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
   return (
     <>
       <div className="border rounded shadow p-4">
@@ -221,7 +221,7 @@ function CartDropdown({ store, onCartChange }) {
             ))}
           </div>
         )}
-        {isOpen && items.some((item) => item.is_chosen) && (
+        {/* {isOpen && items.some((item) => item.is_chosen) && (
           <div
             className="mt-2 p-3 border rounded bg-yellow-50 cursor-pointer hover:bg-yellow-100"
             onClick={() => setShowPromotionModal(true)}
@@ -231,14 +231,14 @@ function CartDropdown({ store, onCartChange }) {
               {store.promotion?.description}
             </p>
           </div>
-        )}
+        )} */}
 
-        {showPromotionModal && (
+        {/* {showPromotionModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded shadow-lg w-96">
               <h2 className="text-xl font-semibold mb-4">Chọn khuyến mãi</h2>
               {/* Ví dụ danh sách promotion */}
-              <ul className="space-y-2">
+              {/* <ul className="space-y-2">
                 {availablePromotions.map((promo) => (
                   <li
                     key={promo._id}
@@ -257,7 +257,7 @@ function CartDropdown({ store, onCartChange }) {
               </button>
             </div>
           </div>
-        )}
+        )} */} 
       </div>
     </>
   );

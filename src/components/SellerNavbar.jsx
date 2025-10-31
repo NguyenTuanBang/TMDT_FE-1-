@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import LanguageDropDownAdmin from "./LanguageDropDownAdmin";
 import useAuth from "../hooks/useAuth";
 import UserDropDown from "./UserDropDown";
+import NotificationDropdown from "./Notification";
 
 function Navbar() {
   const { user } = useAuth();
@@ -58,16 +59,8 @@ function Navbar() {
           {/* RIGHT: Notifications + Language + User */}
           <div className="flex items-center gap-4">
             {/* Notifications */}
-            <div className="relative flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition cursor-pointer">
-              <div className="relative">
-                <BellIcon className="w-6 h-6 text-gray-700" />
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                  3
-                </span>
-              </div>
-              <span className="text-sm font-medium text-gray-700">
-                Thông báo
-              </span>
+            <div className="p-4">
+              <NotificationDropdown />
             </div>
 
             {/* Language */}

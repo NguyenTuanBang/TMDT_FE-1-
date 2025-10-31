@@ -14,14 +14,13 @@ import { useEffect, useState } from "react";
 import { UploadOutlined } from "@ant-design/icons";
 import api from "../utils/api";
 
-const FormEditVariant = () => {
-  const id = "68e10e224aa0bea0f1946013";
+const FormEditVariant = ({open, setOpen, id}) => {
+ 
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState(null);
   const [fileObj, setFileObj] = useState(null);
   const [initialValues, setInitialValues] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
 
   const fetchData = async (id) => {

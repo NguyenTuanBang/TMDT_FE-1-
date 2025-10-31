@@ -12,12 +12,17 @@ import {
   Chip,
 } from "@heroui/react";
 import { format } from "date-fns";
+import ConfirmModal from "../components/ConfirmModal";
+import RejectModal from "../components/ReplyModal";
 
 export default function PendingStores() {
   const [stores, setStores] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedStore, setSelectedStore] = useState(null); // modal
   const [modalOpen, setModalOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState(null);
+  const [rejectModalOpen, setRejectModalOpen] = useState(false);
 
   const fetchPendingStores = async () => {
     try {
@@ -45,15 +50,15 @@ export default function PendingStores() {
     }
   };
 
-  const handleReject = async (id) => {
-    try {
-      await api.patch(`/stores/${id}/reject`);
-      fetchPendingStores();
-      setModalOpen(false);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  // const handleReject = async (id) => {
+  //   try {
+  //     await api.patch(`/stores/${id}/reject`);
+  //     fetchPendingStores();
+  //     setModalOpen(false);
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
 
   const openModal = (store) => {
     setSelectedStore(store);
@@ -216,14 +221,19 @@ export default function PendingStores() {
             {/* Action buttons */}
             <div className="mt-6 flex justify-end gap-4">
               <button
-                onClick={() => handleApprove(selectedStore._id)}
+                onClick={() => {
+                  setConfirmAction(
+                    () => () => handleApprove(selectedStore._id)
+                  );
+                  setConfirmOpen(true);
+                }}
                 className="px-5 py-2 rounded-xl bg-gradient-to-r from-green-400 to-green-600 text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all"
               >
                 Duyệt
               </button>
 
               <button
-                onClick={() => handleReject(selectedStore._id)}
+                onClick={() => setRejectModalOpen(true)}
                 className="px-5 py-2 rounded-xl bg-gradient-to-r from-red-400 to-red-600 text-white font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all"
               >
                 Loại
@@ -239,6 +249,36 @@ export default function PendingStores() {
           </div>
         </div>
       )}
+      <ConfirmModal
+        isOpen={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        title="Xác nhận từ chối cửa hàng"
+        message="Bạn có chắc chắn muốn từ chối cửa hàng này? Hành động này không thể hoàn tác."
+        confirmText="Từ chối"
+        cancelText="Hủy"
+        color="danger"
+        onConfirm={() => {
+          confirmAction?.();
+          setConfirmOpen(false);
+        }}
+      />
+      <RejectModal
+        isOpen={rejectModalOpen}
+        onClose={() => setRejectModalOpen(false)}
+        storeName={selectedStore?.name}
+        onConfirm={async (reason) => {
+          try {
+            await api.patch(`/stores/${selectedStore._id}/reject`, {
+              reply: reason,
+            });
+            fetchPendingStores();
+            setRejectModalOpen(false);
+            setModalOpen(false);
+          } catch (err) {
+            console.error(err);
+          }
+        }}
+      />
     </div>
   );
 }
