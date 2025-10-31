@@ -4,10 +4,17 @@ import LanguageDropDownAdmin from "./LanguageDropDownAdmin";
 import useAuth from "../hooks/useAuth";
 import UserDropDown from "./UserDropDown";
 import NotificationDropdown from "./Notification";
+import { useRef, useState } from "react";
+import api from "../utils/api";
 
 function Navbar() {
   const { user } = useAuth();
   const location = useLocation();
+  const [openDropdown, setOpenDropdown] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const dropdownRef = useRef(null);
 
   const languageOptions = [
     { key: "vi", label: "Tiếng Việt" },
@@ -24,23 +31,23 @@ function Navbar() {
   ];
 
   const isActive = (path) => location.pathname.startsWith(path);
-   const handleToggleDropdown = async () => {
-      if (!openDropdown) {
-        // Mở lần đầu → fetch dữ liệu
-        setLoading(true);
-        setError("");
-        try {
-          const res = await api.get(`/reply/`);
-          setNotifications(res.data.data || []);
-        } catch (err) {
-          console.error(err);
-          setError("Không thể tải thông báo");
-        } finally {
-          setLoading(false);
-        }
+  const handleToggleDropdown = async () => {
+    if (!openDropdown) {
+      // Mở lần đầu → fetch dữ liệu
+      setLoading(true);
+      setError("");
+      try {
+        const res = await api.get(`/reply/`);
+        setNotifications(res.data.data || []);
+      } catch (err) {
+        console.error(err);
+        setError("Không thể tải thông báo");
+      } finally {
+        setLoading(false);
       }
-      setOpenDropdown(!openDropdown);
-    };
+    }
+    setOpenDropdown(!openDropdown);
+  };
 
   return (
     <nav className="top-0 left-0 right-0 z-50 w-full bg-white border-b border-gray-300 shadow-sm">
@@ -77,16 +84,16 @@ function Navbar() {
           <div className="flex items-center gap-4">
             {/* Notifications */}
             <div
-              className="relative flex items-center gap-2 px-3 py-1 rounded-lg hover:bg-white/20 transition cursor-pointer"
+              className="relative flex items-center gap-2 px-3 py-1 hover:bg-white/20 transition cursor-pointer border border-gray-300 rounded-full"
               onClick={handleToggleDropdown}
             >
               <div className="relative flex items-center justify-center w-8 h-8">
-                <BellIcon className="w-6 h-6 text-white" />
+                <BellIcon className="w-6 h-6 text-gray-600" />
                 {/* <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-md">
                   3
                 </span> */}
               </div>
-              <span className="text-white font-medium">Thông báo</span>
+              <span className="text-gray-800 font-medium">Thông báo</span>
               {openDropdown && (
                 <div
                   ref={dropdownRef}
