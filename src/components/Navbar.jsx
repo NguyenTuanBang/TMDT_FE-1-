@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import LanguageDropDown from "./LanguageDropDown.jsx";
 import useAuth from "../hooks/useAuth.jsx";
 import MeDropDown from "./MeDropDown.jsx";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useEffect } from "react";
 import api from "../utils/api.jsx";
 import axios from "axios";
@@ -14,6 +14,40 @@ function Navbar() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { data: cartCount, isLoading } = useCartCount();
+  const [openDropdown, setOpenDropdown] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const dropdownRef = useRef(null);
+
+  const handleToggleDropdown = async () => {
+    if (!openDropdown) {
+      // Mở lần đầu → fetch dữ liệu
+      setLoading(true);
+      setError("");
+      try {
+        const res = await api.get(`/reply/`);
+        setNotifications(res.data.data || []);
+      } catch (err) {
+        console.error(err);
+        setError("Không thể tải thông báo");
+      } finally {
+        setLoading(false);
+      }
+    }
+    setOpenDropdown(!openDropdown);
+  };
+
+  // Đóng dropdown khi click ra ngoài
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpenDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // const [numberOfItem, setNumberOfItem] = useState(0)
   // const [onDisplay, setOndisplay] = useState(false)
@@ -45,7 +79,9 @@ function Navbar() {
           // `${
           //   import.meta.env.VITE_LOCAL_PORT
           // }/products/search?keyword=${keyword}`
-          `${import.meta.env.VITE_DEPLOY_PORT}/products/search?keyword=${keyword}`
+          `${
+            import.meta.env.VITE_DEPLOY_PORT
+          }/products/search?keyword=${keyword}`
         );
         setResults(res.data.data);
         setTotalCount(res.data.totalResults);
@@ -189,14 +225,11 @@ function Navbar() {
                       {totalCount >= 5 && (
                         <div
                           className="p-3 text-blue-600 font-medium text-center border-t cursor-pointer hover:bg-blue-50"
-                          onClick={() =>
-                            {
-                              setKeyword("");
-                              setShowDropdown(false)
-                              navigate(`/products?name=${keyword}`)
-                            }
-                          }
-                          
+                          onClick={() => {
+                            setKeyword("");
+                            setShowDropdown(false);
+                            navigate(`/products?name=${keyword}`);
+                          }}
                         >
                           Xem thêm {totalCount - 4} sản phẩm...
                         </div>
@@ -209,11 +242,55 @@ function Navbar() {
           </div>
 
           <div className="flex items-center">
-            <div className="relative flex items-center gap-2 px-3 py-1 rounded-lg transition cursor-pointer">
+            <div
+              className="relative flex items-center gap-2 px-3 py-1 rounded-lg hover:bg-white/20 transition cursor-pointer"
+              onClick={handleToggleDropdown}
+            >
               <div className="relative flex items-center justify-center w-8 h-8">
-                {/* <BellIcon className="w-6 h-6 text-white" /> */}
-                <NotificationDropdown />
+                <BellIcon className="w-6 h-6 text-white" />
+                {/* <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-md">
+                  3
+                </span> */}
               </div>
+              <span className="text-white font-medium">Thông báo</span>
+              {openDropdown && (
+                <div
+                  ref={dropdownRef}
+                  className="absolute right-0 top-full mt-2 w-80 bg-white rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto"
+                >
+                  <div className="p-3 border-b font-semibold text-gray-800">
+                    Thông báo
+                  </div>
+
+                  {loading ? (
+                    <div className="p-4 text-center text-gray-500">
+                      Đang tải...
+                    </div>
+                  ) : error ? (
+                    <div className="p-4 text-center text-red-500">{error}</div>
+                  ) : notifications.length === 0 ? (
+                    <div className="p-4 text-center text-gray-500">
+                      Không có thông báo nào
+                    </div>
+                  ) : (
+                    <div className="m-3 border border-gray-200 rounded-lg p-2 bg-gray-50">
+                      {notifications.map((noti, idx) => (
+                        <div
+                          key={idx}
+                          className="px-4 py-3 hover:bg-gray-100 cursor-pointer transition rounded-md"
+                        >
+                          <div className="font-semibold text-gray-800">
+                            {noti.title}
+                          </div>
+                          <div className="text-sm text-gray-600 mt-1 line-clamp-2">
+                            {noti.content}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="p-6">

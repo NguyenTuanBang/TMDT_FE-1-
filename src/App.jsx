@@ -22,6 +22,7 @@ import Admin from "./pages/Admin";
 import OrderList from "./pages/OrderList";
 import ProductList from "./pages/ProductList";
 import StoreList from "./pages/StoreList";
+// import OrderSeller from "./pages/OrderSeller";
 import Seller from "./pages/Seller";
 import ProductSeller from "./pages/ProductSeller";
 import StoreSeller from "./pages/StoreSeller";
@@ -29,6 +30,8 @@ import MyOrder from "./pages/MyOrder";
 import NotFoundPage from "./pages/NotFoundPage";
 import Order from "./pages/Order";
 import ListProduct from "./pages/ListProduct";
+import AdminDashboard from "./pages/AdminDashboard";
+import SellerDashboard from "./pages/SellerDashboard";
 
 function App() {
   return (
@@ -50,7 +53,8 @@ function App() {
       </Route>
 
       <Route path="/admin" element={<Admin />}>
-        <Route index element={<UserList />} />
+        <Route index element={<AdminDashboard />} />
+        <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="users" element={<UserList />} />
         <Route path="orders" element={<OrderList />} />
         <Route path="products" element={<ProductList />} />
@@ -63,6 +67,8 @@ function App() {
         <Route index element={<ProductSeller />} />
         <Route path="products" element={<ProductSeller />} />
         <Route path="stores" element={<StoreSeller />} />
+        {/* <Route path="orders" element={<OrderSeller />} /> */}
+        <Route path="dashboard" element={<SellerDashboard />} />
       </Route>
 
       <Route path="/" element={<Products />} />
