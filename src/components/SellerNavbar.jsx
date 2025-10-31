@@ -24,6 +24,23 @@ function Navbar() {
   ];
 
   const isActive = (path) => location.pathname.startsWith(path);
+   const handleToggleDropdown = async () => {
+      if (!openDropdown) {
+        // Mở lần đầu → fetch dữ liệu
+        setLoading(true);
+        setError("");
+        try {
+          const res = await api.get(`/reply/`);
+          setNotifications(res.data.data || []);
+        } catch (err) {
+          console.error(err);
+          setError("Không thể tải thông báo");
+        } finally {
+          setLoading(false);
+        }
+      }
+      setOpenDropdown(!openDropdown);
+    };
 
   return (
     <nav className="top-0 left-0 right-0 z-50 w-full bg-white border-b border-gray-300 shadow-sm">
