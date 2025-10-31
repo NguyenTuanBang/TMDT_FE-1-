@@ -165,7 +165,7 @@ function ProductDetail() {
   return (
     <>
       <Navbar />
-      <div className="px-40 mt-40">
+      <div className="px-40 mt-30">
         <div className="flex gap-20">
           <div className="flex flex-col items-center">
             <img
