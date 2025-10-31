@@ -42,8 +42,8 @@ const ProductFormModal = () => {
       try {
         console.log("hello");
         const res = await axios.get(
-          `${import.meta.env.VITE_LOCAL_PORT}/allTags`
-          // `${import.meta.env.VITE_DEPLOY_PORT}/allTags`
+          // `${import.meta.env.VITE_LOCAL_PORT}/allTags`
+          `${import.meta.env.VITE_DEPLOY_PORT}/allTags`
         );
         const tags = res.data.data || [];
 

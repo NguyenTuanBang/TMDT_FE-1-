@@ -42,10 +42,10 @@ function Navbar() {
     const fetchData = async () => {
       try {
         const res = await axios.get(
-          `${
-            import.meta.env.VITE_LOCAL_PORT
-          }/products/search?keyword=${keyword}`
-          // `${import.meta.env.VITE_DEPLOY_PORT}/products/search?keyword=${keyword}`
+          // `${
+          //   import.meta.env.VITE_LOCAL_PORT
+          // }/products/search?keyword=${keyword}`
+          `${import.meta.env.VITE_DEPLOY_PORT}/products/search?keyword=${keyword}`
         );
         setResults(res.data.data);
         setTotalCount(res.data.totalResults);

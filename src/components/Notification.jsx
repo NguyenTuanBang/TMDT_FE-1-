@@ -50,9 +50,9 @@ export default function NotificationDropdown() {
       >
         <div className="relative flex items-center justify-center w-8 h-8">
           <BellIcon className="w-6 h-6 text-white" />
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-md">
+          {/* <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow-md">
             3
-          </span>
+          </span> */}
         </div>
         <span className="text-white font-medium">Thông báo</span>
 
