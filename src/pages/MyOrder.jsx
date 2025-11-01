@@ -14,8 +14,9 @@ function MyOrder() {
   if (!orders || !user)
     return <p className="text-center mt-4 text-blue-600">Loading...</p>;
 
-  const userOrders = orders.filter((order) => order.contact?.user === user._id);
-  console.log(userOrders);
+  const userOrders = orders
+    .filter((order) => order.contact?.user === user._id)
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   if (userOrders.length === 0)
     return (
