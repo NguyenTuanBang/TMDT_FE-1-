@@ -351,32 +351,76 @@ const Order = () => {
   };
 
   return (
-    <>
+       <>
       <Navbar />
-      <div className="max-w-4xl mx-auto p-4 mt-[60px]">
-        {/* Phần chọn địa chỉ */}
-        <div className="relative mb-6">
+      <div className="max-w-5xl mx-auto p-6 mt-[70px]">
+        <h2 className="text-3xl text-center font-bold text-blue-500 mb-4 bg-gradient-to-r from-blue-100 via-blue-50 to-blue-100 p-3 rounded-xl shadow-md">
+          Xác nhận đơn hàng
+        </h2>
+        {/* 🏠 Phần chọn địa chỉ */}
+        <div className="relative mb-8">
           <div
-            className="border p-3 rounded-lg flex justify-between items-center cursor-pointer bg-white shadow-sm"
+            className="border-3 border-blue-300 p-4 rounded-xl flex justify-between items-center cursor-pointer bg-gradient-to-r from-blue-50 to-white shadow-md hover:shadow-lg transition"
             onClick={() => setIsAddressDropdownOpen(!isAddressDropdownOpen)}
           >
             {chosenAddress ? (
-              <div>
-                <p className="font-semibold">{chosenAddress.name}</p>
-                <p className="text-gray-600 text-sm">{chosenAddress.phone}</p>
-                <p className="text-gray-500 text-sm">
-                  {chosenAddress.specificAddress} {chosenAddress.ward},{" "}
-                  {chosenAddress.district}, {chosenAddress.province}
-                </p>
-              </div>
+              <>
+                <div className="flex-shrink-0 w-9 h-9 bg-blue-100 text-blue-600 rounded-full flex items-center justify-start items-start font-semibold">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.8}
+                    stroke="currentColor"
+                    className="w-5 h-5"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 11c1.657 0 3-1.343 3-3S13.657 5 12 5 9 6.343 9 8s1.343 3 3 3z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 22s8-4.5 8-11a8 8 0 10-16 0c0 6.5 8 11 8 11z"
+                    />
+                  </svg>
+                </div>
+                <div className="flex-1 text-sm leading-relaxed">
+                  {/* Tên người nhận */}
+                  <p className="font-semibold text-gray-900 text-base tracking-wide mb-1">
+                    {chosenAddress.name}
+                  </p>
+
+                  {/* Địa chỉ chi tiết */}
+                  <p className="text-gray-700 mb-1">
+                    <span className="font-semibold text-gray-800">
+                      Địa chỉ:
+                    </span>{" "}
+                    <span className="font-semibold text-gray-700">
+                      {chosenAddress.detail}, {chosenAddress.ward},{" "}
+                      {chosenAddress.district}, {chosenAddress.province}
+                    </span>
+                  </p>
+
+                  {/* Số điện thoại */}
+                  <p className="font-semibold text-gray-500">
+                    Số điện thoại: {chosenAddress.phone}
+                  </p>
+                </div>
+              </>
             ) : (
               <p className="text-gray-400 italic">Chưa có địa chỉ được chọn</p>
             )}
-            <span>{isAddressDropdownOpen ? "▲" : "▼"}</span>
+            <span className="text-gray-500 font-semibold">
+              {isAddressDropdownOpen ? "▲" : "▼"}
+            </span>
           </div>
 
+          {/* Dropdown địa chỉ */}
           {isAddressDropdownOpen && (
-            <div className="absolute z-10 w-full bg-white border mt-2 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+            <div className="absolute z-20 w-full bg-white border border-blue-200 mt-2 rounded-2xl shadow-lg max-h-60 overflow-y-auto transition-all duration-200 animate-fadeIn backdrop-blur-sm">
+              {/* Danh sách địa chỉ */}
               {listAddress.length > 0 &&
                 listAddress
                   .filter((addr) => addr._id !== chosenAddress?._id)
@@ -384,18 +428,65 @@ const Order = () => {
                     <div
                       key={addr._id}
                       onClick={() => chooseNewAddress(addr._id)}
-                      className="p-3 hover:bg-gray-100 cursor-pointer"
+                      className="p-3.5 hover:bg-gradient-to-r from-blue-50 to-blue-100 cursor-pointer transition-all duration-200 flex items-start gap-3 border-b-2 border-gray-300 last:border-none "
                     >
-                      <p className="font-semibold">{addr.name}</p>
-                      <p className="text-gray-600 text-sm">{addr.phone}</p>
-                      <p className="text-gray-500 text-sm truncate">
-                        {addr.specificAddress} {addr.ward}, {addr.district},{" "}
-                        {addr.province}
-                      </p>
+                      {/* Icon avatar đại diện địa chỉ */}
+                      <div className="flex-shrink-0 w-9 h-9 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-semibold">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.8}
+                          stroke="currentColor"
+                          className="w-5 h-5"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M12 11c1.657 0 3-1.343 3-3S13.657 5 12 5 9 6.343 9 8s1.343 3 3 3z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M12 22s8-4.5 8-11a8 8 0 10-16 0c0 6.5 8 11 8 11z"
+                          />
+                        </svg>
+                      </div>
+
+                      {/* Nội dung địa chỉ */}
+                      <div className="flex-1 text-sm leading-relaxed">
+                        {/* Hàng 1: Tên người nhận */}
+                        <p className="font-semibold text-gray-900 text-base tracking-wide mb-1">
+                          {addr.name}
+                        </p>
+
+                        {console.log(addr)}
+                        {/* Hàng 2: Địa chỉ chi tiết */}
+                        <p className="text-gray-700 mb-1">
+                          <span className="font-semibold text-gray-800">
+                            Địa chỉ:
+                          </span>{" "}
+                          <span className="font-semibold text-gray-700">
+                            {addr.detail}, {addr.ward}, {addr.district},{" "}
+                            {addr.province}
+                          </span>
+                        </p>
+
+                        {/* Hàng 3: Số điện thoại */}
+                        <p className="font-semibold text-gray-500">
+                          Số điện thoại: {addr.phone}
+                        </p>
+                      </div>
                     </div>
                   ))}
-              <div className="p-3 text-center text-blue-500 cursor-pointer hover:underline">
-                <Button color="primary" onPress={handleOpen}>
+
+              {/* Thêm địa chỉ mới */}
+              <div className="p-3 text-center border-t border-gray-100 bg-gradient-to-r from-blue-50/50 to-white rounded-b-2xl">
+                <Button
+                  color="primary"
+                  onPress={handleOpen}
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium rounded-lg shadow-sm hover:shadow-md hover:opacity-90 transition-all duration-200 px-5 py-2"
+                >
                   + Thêm địa chỉ mới
                 </Button>
               </div>
@@ -403,71 +494,94 @@ const Order = () => {
           )}
         </div>
 
-        {/* Nếu chưa có địa chỉ */}
+        {/* ⚠️ Nếu chưa có địa chỉ */}
         {!chosenAddress && (
-          <div className="border p-6 rounded-lg shadow bg-gray-50 text-center text-gray-600">
-            <p>Chưa có địa chỉ. Hãy thêm địa chỉ giao hàng trước khi đặt hàng.</p>
+          <div className="border border-gray-200 p-6 rounded-xl shadow-md bg-gradient-to-r from-gray-50 to-white text-center text-gray-600">
+            <p>
+              Chưa có địa chỉ. Hãy thêm địa chỉ giao hàng trước khi đặt hàng.
+            </p>
           </div>
         )}
 
-        {/* Hiển thị đơn hàng theo cửa hàng */}
+        {/* 🏬 Danh sách đơn hàng */}
         {chosenAddress && preOrder?.Store && preOrder.Store.length > 0 && (
           <div className="space-y-6 overflow-y-auto max-h-[80%]">
             {preOrder.Store.map((store) => (
-              <div key={store._id} className="border rounded-lg shadow p-4 bg-white">
-                <div className="flex items-center space-x-3 border-b pb-2 mb-3">
+              <div
+                key={store._id}
+                className="border-2 border-blue-400 rounded-xl shadow-md bg-white p-4 hover:shadow-lg transition"
+              >
+                {/* Header cửa hàng */}
+                <div className="flex items-center space-x-3 border-b border-gray-100 pb-3 mb-3">
                   <img
                     src={store.store_id.user.avatar}
                     alt={store.store_id.name}
-                    className="w-10 h-10 rounded"
+                    className="w-10 h-10 rounded-lg object-cover"
                   />
                   <div>
-                    <p className="font-semibold">{store.store_id.name}</p>
+                    <p className="font-semibold text-gray-800">
+                      {store.store_id.name}
+                    </p>
                     {store.shippingFee !== undefined && (
                       <p className="text-sm text-gray-500">
-                        Phí giao hàng: {store.shippingFee.toLocaleString()}₫
+                        Phí giao hàng:{" "}
+                        <span className="font-medium text-blue-600">
+                          {store.shippingFee.toLocaleString()}₫
+                        </span>
                       </p>
                     )}
                   </div>
                 </div>
 
+                {/* Danh sách sản phẩm */}
                 <div className="space-y-2">
                   {store.Item.map((item) => (
                     <div
                       key={item._id}
-                      className="flex justify-between items-center border rounded p-2"
+                      className="flex justify-between items-center border-2 border-blue-300 rounded-lg p-3 bg-gray-50 hover:bg-gray-100 transition"
                     >
                       <div className="flex items-center space-x-3">
                         <img
                           src={item.variant_id.image.url}
                           alt={item.variant_id.product_id.name}
-                          className="w-14 h-14 rounded object-cover"
+                          className="w-14 h-14 rounded-lg object-cover"
                         />
                         <div>
-                          <p className="font-medium">
+                          <p className="font-medium text-gray-800">
                             {item.variant_id.product_id.name} -{" "}
                             {item.variant_id.size.size_value} -{" "}
                             {item.variant_id.image.color}
                           </p>
                           <p className="text-gray-500 text-sm">
-                            Đơn giá: {item.unitPrice.toLocaleString()}₫ ×{" "}
-                            {item.quantity}
+                            Đơn giá:{" "}
+                            <span className="text-gray-700 font-medium">
+                              {item.unitPrice.toLocaleString()}₫
+                            </span>{" "}
+                            × {item.quantity}
                           </p>
                         </div>
                       </div>
+
+                      {/* Tổng tiền sản phẩm */}
                       <div className="text-right">
                         {item.discountValue && item.discountValue !== 0 ? (
                           <>
                             <p className="text-gray-400 line-through text-sm">
-                              {(item.unitPrice * item.quantity).toLocaleString()}₫
+                              {(
+                                item.unitPrice * item.quantity
+                              ).toLocaleString()}
+                              ₫
                             </p>
                             <p className="font-semibold text-red-600">
                               {item.finalPrice.toLocaleString()}₫
                             </p>
                           </>
                         ) : (
-                          <p className="font-semibold">
-                            {(item.finalPrice || item.unitPrice * item.quantity).toLocaleString()}₫
+                          <p className="font-semibold text-blue-600">
+                            {(
+                              item.finalPrice || item.unitPrice * item.quantity
+                            ).toLocaleString()}
+                            ₫
                           </p>
                         )}
                       </div>
@@ -475,9 +589,10 @@ const Order = () => {
                   ))}
                 </div>
 
+                {/* Khuyến mãi */}
                 {store.promotion && (
-                  <div className="mt-3 bg-yellow-50 border p-2 rounded text-sm text-yellow-700">
-                    Khuyến mãi áp dụng: <b>{store.promotion.name}</b> –{" "}
+                  <div className="mt-3 bg-yellow-50 border border-yellow-200 p-3 rounded-lg text-sm text-yellow-700">
+                    🎁 Khuyến mãi áp dụng: <b>{store.promotion.name}</b> –{" "}
                     {store.promotion.description}
                   </div>
                 )}
@@ -486,18 +601,18 @@ const Order = () => {
           </div>
         )}
 
-        {/* Tổng tiền + Nút mua */}
+        {/* 💰 Tổng tiền + nút mua hàng */}
         {preOrder && preOrder.Store && (
-          <div className="mt-8 border-t pt-4 flex justify-between items-center">
-            <div className="text-lg font-semibold">
+          <div className="mt-10 border-t border-gray-200 pt-5 flex justify-between items-center bg-gradient-to-r from-blue-200 to-blue-100 rounded-xl p-4 shadow-md">
+            <div className="text-lg font-semibold text-gray-800">
               Tổng tiền:{" "}
-              <span className="text-red-500">
+              <span className="text-blue-500 text-2xl font-bold">
                 {preOrder.finalTotal?.toLocaleString() || 0}₫
               </span>
             </div>
             <button
               onClick={() => onPayment()}
-              className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 transition"
+              className="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-8 py-3 rounded-lg font-semibold shadow-md hover:opacity-90 transition-all active:scale-95"
             >
               Mua hàng
             </button>
