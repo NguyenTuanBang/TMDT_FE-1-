@@ -28,7 +28,7 @@ export default function ProductTable({
   const [page, setPage] = useState(1);
   const rowsPerPage = 6;
 
-  // Tổng số trang
+  data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   const totalPages = Math.ceil(data.length / rowsPerPage);
 
   // Dữ liệu được hiển thị theo trang
@@ -192,7 +192,7 @@ export default function ProductTable({
       </Table>
 
       {/* Hiện phân trang */}
-      {data.length > 10 && (
+      {data.length && (
         <div className="flex justify-center mt-4">
           <Pagination
             color="success"

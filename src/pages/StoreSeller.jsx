@@ -46,13 +46,9 @@ function StoreSeller() {
   }, []);
 
   const totalPayment = ordersOfStore.reduce(
-    (acc, order) => (acc += order.final_amount),
+    (acc, order) => (acc += order.orderStore[0].finalTotal),
     0
   );
-
-  console.log(totalPayment);
-
-  console.log(ordersOfStore);
 
   const uniqueCustomers = orders.reduce((acc, order) => {
     const customer = order.contact; // mỗi order có contact
@@ -96,7 +92,7 @@ function StoreSeller() {
       <div className="bg-gradient-to-r from-blue-100 to-blue-50 border-b-2 border-gray-300 px-10 py-10 shadow-lg">
         <div className="flex items-center gap-8">
           <img
-            src="/storeavt.jpg"
+            src={store.user.avatar}
             alt="Avatar shop"
             className="w-48 h-48 rounded-full object-cover border-4 border-gray-300 shadow-xl"
           />
