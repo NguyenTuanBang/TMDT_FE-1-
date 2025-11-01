@@ -46,7 +46,7 @@ function StoreSeller() {
   }, []);
 
   const totalPayment = ordersOfStore.reduce(
-    (acc, order) => (acc += order.final_amount),
+    (acc, order) => (acc += order.orderStore[0].finalTotal),
     0
   );
 
