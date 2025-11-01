@@ -134,7 +134,7 @@ export default function OrderList() {
   };
   const handleConfirmItem = async (order) => {
     await api.post("/orders/confirm", { orderItemId: order._id });
-    toast.success("Thành công", `Đã huỷ đơn ${order._id}`);
+    toast.success("Thành công", `Đã xác nhận sản phẩm`);
     onConfirmClose();
   };
 
