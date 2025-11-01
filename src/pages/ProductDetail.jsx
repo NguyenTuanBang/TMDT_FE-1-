@@ -291,32 +291,23 @@ function ProductDetail() {
               </div>
             </div>
 
-            {user ? (
+            
               <div className="mt-6 flex gap-4">
                 <button
                   className="flex-1 border-2 border-blue-600 text-blue-600 px-6 py-3 rounded hover:bg-blue-50 transition font-medium"
-                  onClick={() => addToCart()}
+                  onClick={() => user?addToCart():navigate("/authen/login")}
                 >
                   Thêm vào giỏ hàng
                 </button>
 
                 <button
                   className="flex-1 bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 transition font-medium"
-                  onClick={() => buyNow()}
+                  onClick={() => user?buyNow():navigate("/authen/login")}
                 >
                   Mua ngay
                 </button>
               </div>
-            ) : (
-              <div className="mt-6 flex gap-4">
-                <button
-                  className="flex-1 border-2 border-green-600 text-green-600 px-6 py-3 rounded hover:bg-blue-50 transition font-medium"
-                  onClick={() => navigate("/authen/login")}
-                >
-                  Đăng nhập để mua hàng
-                </button>
-              </div>
-            )}
+            
           </div>
         </div>
       </div >
