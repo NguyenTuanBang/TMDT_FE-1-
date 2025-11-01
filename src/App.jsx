@@ -32,7 +32,7 @@ import Order from "./pages/Order";
 import ListProduct from "./pages/ListProduct";
 import AdminDashboard from "./pages/AdminDashboard";
 import SellerDashboard from "./pages/SellerDashboard";
-import OrderSeller from "./pages/OrderSeller";
+// import OrderSeller from "./pages/OrderSeller";
 
 function App() {
   return (
