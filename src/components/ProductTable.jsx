@@ -192,7 +192,7 @@ export default function ProductTable({
       </Table>
 
       {/* Hiện phân trang */}
-      {data.length > 10 && (
+      {data.length && (
         <div className="flex justify-center mt-4">
           <Pagination
             color="success"
