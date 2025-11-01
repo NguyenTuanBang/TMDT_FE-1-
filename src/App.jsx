@@ -32,6 +32,7 @@ import Order from "./pages/Order";
 import ListProduct from "./pages/ListProduct";
 import AdminDashboard from "./pages/AdminDashboard";
 import SellerDashboard from "./pages/SellerDashboard";
+import RelocateAdminAndSeller from "./hooks/RelocateAdminAndSeller";
 // import OrderSeller from "./pages/OrderSeller";
 
 function App() {
@@ -72,7 +73,7 @@ function App() {
         <Route path="dashboard" element={<SellerDashboard />} />
       </Route>
 
-      <Route path="/" element={<Products />} />
+      <Route path="/" element={<RelocateAdminAndSeller><Products /></RelocateAdminAndSeller>} />
       <Route path="/products/:id" element={<ProductDetail />} />
       <Route path="/cart" element={<Cart />} />
       <Route path="/carts" element={<Cart />} />
