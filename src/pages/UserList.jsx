@@ -344,7 +344,15 @@ export default function UserList() {
                               )}
                             </td>
                             <td className="px-5 py-3 text-gray-700">
-                              {order.status}
+                              <p>
+                                {order.status === "Pending"
+                                  ? "Đang xử lý"
+                                  : order.status === "Cancelled"
+                                  ? "Đã hủy"
+                                  : order.status === "Successful"
+                                  ? "Đã giao"
+                                  : "Chưa cập nhật"}
+                              </p>
                             </td>
                             <td className="px-5 py-3 text-gray-700">
                               <div className="flex gap-2 items-center">
