@@ -399,6 +399,7 @@ export default function ProductList({ storeProduct }) {
           </div>
         </div>
       )}
+        <FormEditVariant open={isOpen} setOpen={setIsOpen} id={variantId} />
     </div>
   );
 }
