@@ -32,6 +32,7 @@ import Order from "./pages/Order";
 import ListProduct from "./pages/ListProduct";
 import AdminDashboard from "./pages/AdminDashboard";
 import SellerDashboard from "./pages/SellerDashboard";
+import OrderSeller from "./pages/OrderSeller";
 
 function App() {
   return (
@@ -64,10 +65,10 @@ function App() {
       </Route>
 
       <Route path="/seller" element={<Seller />}>
-        <Route index element={<ProductSeller />} />
+        <Route index element={<SellerDashboard />} />
         <Route path="products" element={<ProductSeller />} />
         <Route path="stores" element={<StoreSeller />} />
-        {/* <Route path="orders" element={<OrderSeller />} /> */}
+        <Route path="orders" element={<OrderSeller />} /> 
         <Route path="dashboard" element={<SellerDashboard />} />
       </Route>
 
