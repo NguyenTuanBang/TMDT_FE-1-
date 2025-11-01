@@ -1,6 +1,4 @@
-import React from "react";
-import { useEffect } from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth.jsx";
 import api from "../utils/api.jsx";
 import Navbar from "../components/Navbar.jsx";
@@ -26,8 +24,12 @@ const Order = () => {
   const [listAddress, setListAdress] = useState([]);
   const [preOrder, setPreOrder] = useState({});
   const [isAddressDropdownOpen, setIsAddressDropdownOpen] = useState(false);
+  const [coordinates, setCoordinates] = useState(null);
+  const [loadingGeo, setLoadingGeo] = useState(false);
+
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   const fetchData = async () => {
     const res = await api.get("/users/me/address");
@@ -35,9 +37,10 @@ const Order = () => {
     setListAdress(resAddress.filter((item) => item.isDefault === false));
     setChosenAddress(resAddress.find((item) => item.isDefault));
     if (resAddress.length === 0) {
-      handleOpen(); // Gọi modal mở form
+      handleOpen();
     }
   };
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -51,6 +54,7 @@ const Order = () => {
       handleOpen();
     }
   };
+
   useEffect(() => {
     if (chosenAddress && chosenAddress._id) fetchPreOrder(chosenAddress._id);
   }, [chosenAddress]);
@@ -66,9 +70,6 @@ const Order = () => {
     setIsAddressDropdownOpen(false);
   };
 
-  const onPayment = async () => {
-    onPaymentMutation.mutate();
-  };
   const onPaymentMutation = useMutation({
     mutationFn: async () => {
       return await api.post("/orders", { address: chosenAddress._id });
@@ -84,7 +85,9 @@ const Order = () => {
     },
   });
 
-  const toast = useToast();
+  const onPayment = () => {
+    onPaymentMutation.mutate();
+  };
 
   const handleOpen = async () => {
     try {
@@ -151,32 +154,67 @@ const Order = () => {
     detail: Yup.string().required("Vui lòng nhập địa chỉ"),
   });
 
-  const handleSubmit = (values, { resetForm }) => {
-    console.log(provinces);
-    console.log(values.province);
+  const handleSubmit = async (values, { resetForm }) => {
     const province = provinces.find((p) => p.value == values.province)?.name;
     const district = districts.find((d) => d.value == values.district)?.name;
     const ward = wards.find((w) => w.value == values.ward)?.name;
 
+    const parts = [
+      values.detail?.trim(),
+      ward,
+      district,
+      province,
+      "Việt Nam",
+    ].filter(Boolean);
+    const fullAddress = parts.join(", ");
+
+    // Nếu chưa có tọa độ => xác nhận địa chỉ
+    if (!coordinates) {
+      try {
+        setLoadingGeo(true);
+        const res = await api.get(`/geocode?address=${encodeURIComponent(fullAddress)}`);
+        console.log("📍 Gửi geocode:", fullAddress);
+        console.log("📦 Trả về:", res.data);
+        setCoordinates(res.data);
+        toast.success("Thành công", "Đã tìm thấy tọa độ! Xác nhận lại để lưu.");
+      } catch (err) {
+        toast.error("Lỗi", "Không tìm thấy tọa độ");
+        console.error(err);
+      } finally {
+        setLoadingGeo(false);
+      }
+      return;
+    }
+
+    // Nếu đã có tọa độ => gửi BE
     const finalValues = {
       ...values,
       province,
       district,
       ward,
+      lat: coordinates.lat,
+      lng: coordinates.lng,
     };
 
     addAddress.mutate(finalValues, {
       onSuccess: () => {
         resetForm();
+        setCoordinates(null);
         onOpenChange(false);
         fetchData();
         setIsAddressDropdownOpen(false);
         toast.success("Thành công", "Bạn đã thêm một địa chỉ mới");
       },
       onError: (err) => {
-        console.log(err);
+        console.error(err);
       },
     });
+  };
+
+  const handleClose = (resetForm) => {
+    resetForm();
+    setCoordinates(null);
+    onOpenChange(false);
   };
 
   const formNewAddress = () => {
@@ -193,47 +231,44 @@ const Order = () => {
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
-        {({ handleSubmit }) => (
+        {({ handleSubmit, resetForm, setFieldValue, values }) => (
           <Form id="address-form" onSubmit={handleSubmit}>
             <CustomModal
               isOpen={isOpen}
-              onClose={onOpenChange}
+              onClose={() => handleClose(resetForm)}
               title="Nhập thông tin địa chỉ"
-              confirmText="Lưu"
+              confirmText={coordinates ? "Lưu địa chỉ" : "Xác nhận địa chỉ"}
               cancelText="Đóng"
               formId="address-form"
+              confirmProps={{ isLoading: loadingGeo }}
             >
-              <div>
+              <div className="space-y-4">
                 <Field
                   as={Input}
                   name="name"
                   label="Tên"
                   placeholder="Nhập tên của bạn"
                   variant="bordered"
+                  onChange={(e) => {
+                    setFieldValue("name", e.target.value);
+                    setCoordinates(null);
+                  }}
                 />
-                <ErrorMessage
-                  name="name"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
-              </div>
+                <ErrorMessage name="name" component="div" className="text-red-500 text-sm" />
 
-              <div>
                 <Field
                   as={Input}
                   name="phone"
                   label="Số điện thoại"
                   placeholder="Nhập số điện thoại"
                   variant="bordered"
+                  onChange={(e) => {
+                    setFieldValue("phone", e.target.value);
+                    setCoordinates(null);
+                  }}
                 />
-                <ErrorMessage
-                  name="phone"
-                  component="div"
-                  className="text-red-500 text-sm"
-                />
-              </div>
+                <ErrorMessage name="phone" component="div" className="text-red-500 text-sm" />
 
-              <div>
                 <Field name="province">
                   {({ field, form }) => (
                     <CustomSelect
@@ -243,19 +278,13 @@ const Order = () => {
                       value={field.value}
                       onChange={(val) => {
                         form.setFieldValue("province", val);
+                        setCoordinates(null);
                         fetchDistricts(val, form.setFieldValue);
                       }}
-                      error={
-                        form.errors.province && form.touched.province
-                          ? form.errors.province
-                          : null
-                      }
                     />
                   )}
                 </Field>
-              </div>
 
-              <div>
                 <Field name="district">
                   {({ field, form }) => (
                     <CustomSelect
@@ -265,19 +294,13 @@ const Order = () => {
                       value={field.value}
                       onChange={(val) => {
                         form.setFieldValue("district", val);
+                        setCoordinates(null);
                         fetchWards(val, form.setFieldValue);
                       }}
-                      error={
-                        form.errors.district && form.touched.district
-                          ? form.errors.district
-                          : null
-                      }
                     />
                   )}
                 </Field>
-              </div>
 
-              <div>
                 <Field name="ward">
                   {({ field, form }) => (
                     <CustomSelect
@@ -285,32 +308,40 @@ const Order = () => {
                       placeholder="Chọn xã/phường"
                       options={wards}
                       value={field.value}
-                      onChange={(val) => form.setFieldValue("ward", val)}
-                      error={
-                        form.errors.ward && form.touched.ward
-                          ? form.errors.ward
-                          : null
-                      }
+                      onChange={(val) => {
+                        form.setFieldValue("ward", val);
+                        setCoordinates(null);
+                      }}
                     />
                   )}
                 </Field>
-              </div>
 
-              <div>
-                <div>
-                  <Field
-                    as={Input}
-                    name="detail"
-                    label="Nhập địa chỉ cụ thể"
-                    placeholder="Nhập địa chỉ cụ thể của bạn"
-                    variant="bordered"
-                  />
-                  <ErrorMessage
-                    name="detail"
-                    component="div"
-                    className="text-red-500 text-sm"
-                  />
-                </div>
+                <Field
+                  as={Input}
+                  name="detail"
+                  label="Địa chỉ cụ thể"
+                  placeholder="Nhập địa chỉ cụ thể của bạn"
+                  variant="bordered"
+                  onChange={(e) => {
+                    setFieldValue("detail", e.target.value);
+                    setCoordinates(null);
+                  }}
+                />
+                <ErrorMessage name="detail" component="div" className="text-red-500 text-sm" />
+
+                {coordinates && (
+                  <div className="mt-6 bg-blue-50 rounded-lg p-3 border border-blue-200">
+                    <h3 className="text-lg font-semibold text-blue-700 mb-2">Vị trí của bạn</h3>
+                    <iframe
+                      title="map"
+                      width="100%"
+                      height="300"
+                      style={{ border: 0, borderRadius: "8px" }}
+                      src={`https://www.google.com/maps?q=${coordinates.lat},${coordinates.lng}&z=15&output=embed`}
+                      allowFullScreen
+                    />
+                  </div>
+                )}
               </div>
             </CustomModal>
           </Form>
@@ -321,8 +352,9 @@ const Order = () => {
 
   return (
     <>
-      <Navbar></Navbar>
+      <Navbar />
       <div className="max-w-4xl mx-auto p-4 mt-[60px]">
+        {/* Phần chọn địa chỉ */}
         <div className="relative mb-6">
           <div
             className="border p-3 rounded-lg flex justify-between items-center cursor-pointer bg-white shadow-sm"
@@ -345,7 +377,7 @@ const Order = () => {
 
           {isAddressDropdownOpen && (
             <div className="absolute z-10 w-full bg-white border mt-2 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-              {listAddress.length > 0 ? (
+              {listAddress.length > 0 &&
                 listAddress
                   .filter((addr) => addr._id !== chosenAddress?._id)
                   .map((addr) => (
@@ -361,30 +393,28 @@ const Order = () => {
                         {addr.province}
                       </p>
                     </div>
-                  ))
-              ) : null}
-                <div className="p-3 text-center text-blue-500 cursor-pointer hover:underline">
-                  <Button color="primary" onPress={handleOpen}>
-                    + Thêm địa chỉ mới
-                  </Button>
-                </div>
+                  ))}
+              <div className="p-3 text-center text-blue-500 cursor-pointer hover:underline">
+                <Button color="primary" onPress={handleOpen}>
+                  + Thêm địa chỉ mới
+                </Button>
+              </div>
             </div>
           )}
         </div>
+
+        {/* Nếu chưa có địa chỉ */}
         {!chosenAddress && (
           <div className="border p-6 rounded-lg shadow bg-gray-50 text-center text-gray-600">
-            <p>
-              Chưa có địa chỉ. Hãy thêm địa chỉ giao hàng trước khi đặt hàng.
-            </p>
+            <p>Chưa có địa chỉ. Hãy thêm địa chỉ giao hàng trước khi đặt hàng.</p>
           </div>
         )}
+
+        {/* Hiển thị đơn hàng theo cửa hàng */}
         {chosenAddress && preOrder?.Store && preOrder.Store.length > 0 && (
-          <div className="space-y-6  overflow-y-auto max-h-[80%]">
+          <div className="space-y-6 overflow-y-auto max-h-[80%]">
             {preOrder.Store.map((store) => (
-              <div
-                key={store._id}
-                className="border rounded-lg shadow p-4 bg-white"
-              >
+              <div key={store._id} className="border rounded-lg shadow p-4 bg-white">
                 <div className="flex items-center space-x-3 border-b pb-2 mb-3">
                   <img
                     src={store.store_id.user.avatar}
@@ -400,6 +430,7 @@ const Order = () => {
                     )}
                   </div>
                 </div>
+
                 <div className="space-y-2">
                   {store.Item.map((item) => (
                     <div
@@ -428,10 +459,7 @@ const Order = () => {
                         {item.discountValue && item.discountValue !== 0 ? (
                           <>
                             <p className="text-gray-400 line-through text-sm">
-                              {(
-                                item.unitPrice * item.quantity
-                              ).toLocaleString()}
-                              ₫
+                              {(item.unitPrice * item.quantity).toLocaleString()}₫
                             </p>
                             <p className="font-semibold text-red-600">
                               {item.finalPrice.toLocaleString()}₫
@@ -439,10 +467,7 @@ const Order = () => {
                           </>
                         ) : (
                           <p className="font-semibold">
-                            {(
-                              item.finalPrice || item.unitPrice * item.quantity
-                            ).toLocaleString()}
-                            ₫
+                            {(item.finalPrice || item.unitPrice * item.quantity).toLocaleString()}₫
                           </p>
                         )}
                       </div>
@@ -460,11 +485,8 @@ const Order = () => {
             ))}
           </div>
         )}
-        {chosenAddress && (!preOrder?.Store || preOrder.Store.length === 0) && (
-          <p className="text-gray-500 text-center mt-6">
-            Giỏ hàng trống hoặc chưa có sản phẩm được chọn để đặt trước.
-          </p>
-        )}
+
+        {/* Tổng tiền + Nút mua */}
         {preOrder && preOrder.Store && (
           <div className="mt-8 border-t pt-4 flex justify-between items-center">
             <div className="text-lg font-semibold">
@@ -482,9 +504,10 @@ const Order = () => {
           </div>
         )}
       </div>
-      {formNewAddress()}
-    </>
-  );
-};
 
-export default Order;
+      {/* Modal thêm địa chỉ */}
+      {formNewAddress}
+    </>
+  )}
+
+export default Order

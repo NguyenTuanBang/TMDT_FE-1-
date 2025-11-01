@@ -18,6 +18,7 @@ import { useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import useUsers from "../hooks/useUsers";
 import useStores from "../hooks/useStore";
+import api from "../utils/api";
 
 // helper format ngày
 function formatDate(date) {
@@ -127,18 +128,25 @@ export default function OrderList() {
     setIsModalOpen(true);
   };
 
-  const handleDelete = (order) => {
+  const handleDeleteItem = (order) => {
     setOrderToConfirm(order);
     onConfirmOpen();
   };
+  const handleConfirmItem = async (order) => {
+    await api.post("/orders/confirm", { orderItemId: order._id });
+    toast.success("Thành công", `Đã huỷ đơn ${order._id}`);
+    onConfirmClose();
+  };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (!orderToConfirm) return;
 
     // gọi API huỷ đơn hoặc xóa đơn ở đây
-    toast.success("Thành công", `Đã huỷ đơn ${orderToConfirm.code}`);
+    await api.post("/orders/cancel", { orderItemId: orderToConfirm._id });
+    toast.success("Thành công", `Đã huỷ đơn ${orderToConfirm._id}`);
     onConfirmClose();
   };
+
 
   return (
     <div className="p-6 space-y-6">
@@ -190,7 +198,7 @@ export default function OrderList() {
           setFilters((prev) => ({ ...prev, page: newPage }))
         }
         onView={handleView}
-        onDelete={handleDelete}
+        // onDelete={handleDelete}
       />
 
       {isFetching && !isLoading && (
@@ -274,6 +282,9 @@ export default function OrderList() {
                     <th className="py-3 px-4 text-center font-semibold">
                       Thành tiền
                     </th>
+                    <th className="py-3 px-4 text-center font-semibold">
+                      Hành động
+                    </th>
                   </tr>
                 </thead>
 
@@ -284,7 +295,7 @@ export default function OrderList() {
                       {/* Tên cửa hàng */}
                       <tr className="bg-amber-100">
                         <td
-                          colSpan="5"
+                          colSpan="6"
                           className="py-3 px-4 font-semibold text-amber-800 border-y border-amber-300"
                         >
                           {store.store.name}
@@ -342,6 +353,47 @@ export default function OrderList() {
                               item.variant_id.price * item.quantity
                             ).toLocaleString("vi-VN")}{" "}
                             đ
+                          </td>
+                          <td className="py-3 px-4 text-center">
+                            <td className="py-3 px-4 text-center">
+                              {item.status === "PENDING" && (
+                                <div className="flex justify-center gap-2">
+                                  <Button
+                                    size="sm"
+                                    onClick={() => handleConfirmItem(item)}
+                                    className="hover:shadow-lg transition-all"
+                                  >
+                                    Xác nhận
+                                  </Button>
+                                  <Button
+                                    color="danger"
+                                    size="sm"
+                                    onClick={() => handleDeleteItem(item)}
+                                    className="hover:shadow-lg transition-all"
+                                  >
+                                    Hủy
+                                  </Button>
+                                </div>
+                              )}
+
+                              {item.status === "CONFIRMED" && (
+                                <p className="text-blue-600 font-medium">
+                                  Đang vận chuyển
+                                </p>
+                              )}
+
+                              {item.status === "DELIVERED" && (
+                                <p className="text-green-600 font-medium">
+                                  Thành công
+                                </p>
+                              )}
+
+                              {item.status === "CANCELLED" && (
+                                <p className="text-red-600 font-medium">
+                                  Đã huỷ
+                                </p>
+                              )}
+                            </td>
                           </td>
                         </tr>
                       ))}

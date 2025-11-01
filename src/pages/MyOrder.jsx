@@ -26,7 +26,7 @@ function MyOrder() {
   
   const handleConfirmItem = async (itemId) => {
     try {
-      const url = `/orders/confirm`;
+      const url = `/orders/delivered`;
       const res = await api.post(url, { orderItemId: itemId });
       if (res.data.success) {
         // Cập nhật lại danh sách đơn hàng
@@ -231,13 +231,18 @@ function MyOrder() {
                                     Đã hủy
                                   </span>
                                 )}
-                                {item.status === "COMFIRMED" && (
+                                {item.status === "CONFIRMED" && (
                                   <Button
                                     type="primary"
                                     onClick={() => handleConfirmItem(item._id)}
                                   >
                                     Xác nhận
                                   </Button>
+                                )}
+                                {item.status === "DELIVERED" && (
+                                  <span className="text-green-600 font-bold">
+                                    Đã nhận hàng
+                                  </span>
                                 )}
                                 <p>
                                   <span className="font-semibold text-gray-700">

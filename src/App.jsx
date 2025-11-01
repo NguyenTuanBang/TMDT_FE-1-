@@ -22,7 +22,7 @@ import Admin from "./pages/Admin";
 import OrderList from "./pages/OrderList";
 import ProductList from "./pages/ProductList";
 import StoreList from "./pages/StoreList";
-// import OrderSeller from "./pages/OrderSeller";
+import OrderSeller from "./pages/OrderSeller";
 import Seller from "./pages/Seller";
 import ProductSeller from "./pages/ProductSeller";
 import StoreSeller from "./pages/StoreSeller";
@@ -67,7 +67,7 @@ function App() {
         <Route index element={<ProductSeller />} />
         <Route path="products" element={<ProductSeller />} />
         <Route path="stores" element={<StoreSeller />} />
-        {/* <Route path="orders" element={<OrderSeller />} /> */}
+        <Route path="orders" element={<OrderSeller />} />
         <Route path="dashboard" element={<SellerDashboard />} />
       </Route>
 

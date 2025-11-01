@@ -21,6 +21,9 @@ export default function SellerRegister() {
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
+  const [coordinates, setCoordinates] = useState(null)
+  const [loadingGeo, setLoadingGeo] = useState(false);
+
 
   const validationSchema = Yup.object({
     shopName: Yup.string().required("Tên cửa hàng không được để trống"),
@@ -30,9 +33,7 @@ export default function SellerRegister() {
     phone: Yup.string()
       .matches(/^(0|\+84)(\d{9})$/, "Số điện thoại không hợp lệ")
       .required("Số điện thoại không được để trống"),
-    SKU: Yup.string()
-      .matches(/^[A-Z]{3}$/, "SKU phải gồm đúng 3 chữ cái in hoa")
-      .required("SKU không được để trống"),
+    
     citizenID: Yup.string()
       .matches(/^[0-9]{12}$/, "CCCD phải gồm 12 chữ số")
       .required("Số CCCD không được để trống"),
@@ -61,7 +62,6 @@ export default function SellerRegister() {
     addressProvince: "",
     addressDistrict: "",
     addressWard: "",
-    SKU: "",
     phone: "",
     citizenID: "",
     frontID: null,
@@ -82,7 +82,9 @@ export default function SellerRegister() {
       );
       formData.append("phone", values.phone);
       formData.append("citizenCode", values.citizenID);
-      formData.append("SKU_code", values.SKU);
+      formData.append("lat", coordinates.lat);
+      formData.append("lng", coordinates.lng);
+      // formData.append("SKU_code", values.SKU);
 
       if (values.frontID instanceof File) {
         formData.append("citizenImageFront", values.frontID);
@@ -102,6 +104,7 @@ export default function SellerRegister() {
       setFrontPreview(null);
       setBackPreview(null);
       setSelectedAddress("");
+      setCoordinates(null)
     } catch (err) {
       console.error(err);
       toast.error("Lỗi", err.response?.data?.message || "Không thể đăng ký");
@@ -216,23 +219,6 @@ export default function SellerRegister() {
                 className="text-red-500 text-xs mt-1"
               />
             </div>
-
-            <div className="mt-5">
-              <label className="block text-sm font-medium mb-1 text-gray-700">
-                SKU
-              </label>
-              <Field
-                type="text"
-                name="SKU"
-                className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition"
-              />
-              <ErrorMessage
-                name="SKU"
-                component="div"
-                className="text-red-500 text-xs mt-1"
-              />
-            </div>
-
             <div className="mt-5">
               <label className="block text-sm font-medium mb-1 text-gray-700">
                 Số CCCD
@@ -247,6 +233,21 @@ export default function SellerRegister() {
                 component="div"
                 className="text-red-500 text-xs mt-1"
               />
+              {coordinates && (
+                  <div className="mt-6 bg-blue-50 rounded-lg p-3 border border-blue-200">
+                    <h3 className="text-lg font-semibold text-blue-700 mb-2">
+                      Vị trí của bạn
+                    </h3>
+                    <iframe
+                      title="map"
+                      width="100%"
+                      height="300"
+                      style={{ border: 0, borderRadius: "8px" }}
+                      src={`https://www.google.com/maps?q=${coordinates.lat},${coordinates.lng}&z=15&output=embed`}
+                      allowFullScreen
+                    />
+                  </div>
+                )}
             </div>
 
             <div className="flex justify-center mt-5">
@@ -369,14 +370,14 @@ export default function SellerRegister() {
               />
             </div>
           </div>
-
+              
           <CustomModal
             isOpen={isAddressModalOpen}
             onClose={() => setIsAddressModalOpen(false)}
             title="Chọn địa chỉ lấy hàng"
             confirmText="Chọn"
             cancelText="Đóng"
-            onConfirm={() => {
+            onConfirm={async () => {
               if (
                 !values.addressProvince ||
                 !values.addressDistrict ||
@@ -402,6 +403,27 @@ export default function SellerRegister() {
               setSelectedAddress(
                 `${values.addressDetail}, ${wardName}, ${districtName}, ${provinceName}`
               );
+              const parts = [
+                values.addressDetail?.trim(), // ví dụ: "337/2ThạchLam"
+                wardName, // "Phường Phú Thạnh"
+                districtName, // "Quận Tân Phú"
+                provinceName, // "Thành phố Hồ Chí Minh"
+                "Việt Nam",
+              ].filter(Boolean);
+              const fullAddress = parts.join(", ");
+              try {
+                setLoadingGeo(true);
+                const res = await api.get(`/geocode?address=${encodeURIComponent(fullAddress)}`);
+                console.log("📍 Full address gửi lên:", fullAddress);
+                console.log("📦 Dữ liệu trả về từ API:", res.data);
+                setCoordinates(res.data);
+                toast.success("Thành công", "Đã tìm thấy tọa độ! Xác nhận lần nữa để lưu.");
+              } catch (err) {
+                toast.error("Lỗi", "Không tìm thấy tọa độ");
+                console.error(err);
+              } finally {
+                setLoadingGeo(false);
+              }
               setIsAddressModalOpen(false);
             }}
           >
@@ -457,6 +479,7 @@ export default function SellerRegister() {
                   />
                 )}
               </Field>
+          
             </div>
           </CustomModal>
         </Form>

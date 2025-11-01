@@ -90,15 +90,7 @@ export default function OrderTable({ columns, data = [], onView, onDelete }) {
                 >
                   <EyeIcon size={20} />
                 </span>
-              </Tooltip>
-              <Tooltip content="Hủy đơn hàng">
-                <span
-                  className="text-red-500 cursor-pointer hover:scale-110 transition-transform"
-                  onClick={() => onDelete?.(order)}
-                >
-                  <Trash2Icon size={20} />
-                </span>
-              </Tooltip>
+              </Tooltip>             
             </div>
           );
 
