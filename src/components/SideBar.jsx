@@ -42,7 +42,10 @@ export default function Sidebar() {
     <div className="h-screen bg-gray-100 border-r border-gray-200 p-4 flex flex-col">
       <div className="mt-auto flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-200 cursor-pointer">
         <img
-          src={user.avatar}
+          src={
+            user?.avatar ||
+            `https://api.dicebear.com/9.x/initials/svg?seed=${user?.username}`
+          }
           alt="User Avatar"
           className="w-10 h-10 rounded-full"
         />
