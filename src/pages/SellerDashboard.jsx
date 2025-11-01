@@ -29,7 +29,7 @@ export default function SellerDashboard() {
   const { data: stores } = useStores();
   const { data: products } = useProducts();
 
-  if (!orders || !users || !stores || !products) return;
+  if (!orders || !users || !stores || !products | !user) return;
 
   const store = stores.find((store) => store.user._id === user._id);
 

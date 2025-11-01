@@ -158,11 +158,6 @@ function Product() {
       <div className="mt-40 px-6">
         <Banner />
         <div className="mt-20 px-10">
-          <h2 className="text-2xl font-bold mb-4">Danh mục</h2>
-          <Category />
-        </div>
-
-        <div className="mt-20 px-10">
           <h2 className="text-2xl font-bold mb-4">Sản phẩm nổi bật</h2>
           <ProductCarousel products={topRating} />
         </div>

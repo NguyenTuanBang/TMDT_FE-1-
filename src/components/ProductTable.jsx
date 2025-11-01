@@ -195,6 +195,7 @@ export default function ProductTable({
       {data.length && (
         <div className="flex justify-center mt-4">
           <Pagination
+            showControls
             color="success"
             variant="bordered"
             page={page}

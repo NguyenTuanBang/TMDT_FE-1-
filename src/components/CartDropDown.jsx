@@ -108,66 +108,73 @@ function CartDropdown({ store, onCartChange }) {
   //   }
   // };
   return (
-    <>
-      <div className="border rounded shadow p-4">
+       <>
+      <div className="border-3 border-blue-300 bg-gradient-to-br from-white to-blue-50 rounded-2xl shadow-md p-5 mb-5 transition-all hover:shadow-lg">
         {/* Header */}
         <div className="flex justify-between items-center w-full font-semibold cursor-pointer">
           {/* Checkbox + Avatar + StoreName */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-3">
             <input
               type="checkbox"
               checked={allSelected}
-              onClick={(e) => e.stopPropagation()} // ngăn click lan ra parent
-              onChange={toggleSelectAll} // toggle select all items
-              className="w-4 h-4"
+              onClick={(e) => e.stopPropagation()}
+              onChange={toggleSelectAll}
+              className="w-4 h-4 accent-blue-600"
             />
             <div
               className="flex items-center space-x-2"
-              onClick={toggleDropdown} // click avatar + tên toggle dropdown
+              onClick={toggleDropdown}
             >
               <img
                 src={store.store_id.user.avatar}
                 alt={store.store_id.name}
-                className="w-10 h-10 object-cover rounded"
+                className="w-10 h-10 object-cover rounded-full border border-blue-300 shadow-sm"
               />
-              <span>{store.store_id.name}</span>
+              <span className="text-gray-800 font-semibold hover:text-blue-600 transition-colors">
+                {store.store_id.name}
+              </span>
             </div>
           </div>
 
           {/* Dropdown arrow */}
-          <span className="cursor-pointer" onClick={toggleDropdown}>
+          <span
+            className="cursor-pointer text-blue-600 text-lg"
+            onClick={toggleDropdown}
+          >
             {isOpen ? "▲" : "▼"}
           </span>
         </div>
 
         {/* Content */}
         {isOpen && (
-          <div className="mt-2 space-y-2">
+          <div className="mt-3 space-y-3">
             {items.map((item) => (
               <div
                 key={item._id}
-                className="flex items-center justify-between p-2 border rounded"
+                className="flex items-center justify-between p-3 bg-white border-2 border-blue-300 rounded-xl shadow-sm hover:shadow-md transition-all"
               >
                 {/* Checkbox + Image + Info */}
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-3">
                   <input
                     type="checkbox"
                     checked={item.is_chosen}
                     onChange={() => toggleSelect(item._id)}
-                    className="w-4 h-4"
+                    className="w-4 h-4 accent-blue-600"
                   />
                   <img
                     src={item.variant_id.image.url}
                     alt={item.variant_id.product_id.name}
-                    className="w-12 h-12 object-cover rounded"
+                    className="w-14 h-14 object-cover rounded-lg border border-gray-200"
                   />
                   <div>
-                    <p className="font-medium">
+                    <p className="font-medium text-gray-800">
                       {item.variant_id.product_id.name} -{" "}
-                      {item.variant_id.size.size_value} -{" "}
-                      {item.variant_id.image.color}
+                      <span className="text-gray-600">
+                        {item.variant_id.size.size_value} -{" "}
+                        {item.variant_id.image.color}
+                      </span>
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-blue-600 font-semibold">
                       {item.unitPrice.toLocaleString()}₫
                     </p>
                   </div>
@@ -177,24 +184,26 @@ function CartDropdown({ store, onCartChange }) {
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => decreaseQuantity(item._id)}
-                    className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                    className="px-2 py-1 bg-blue-100 text-blue-600 rounded-md hover:bg-blue-200 transition"
                   >
                     -
                   </button>
-                  <span>{item.quantity}</span>
+                  <span className="font-medium text-gray-800">
+                    {item.quantity}
+                  </span>
                   <button
                     onClick={() => increaseQuantity(item._id)}
-                    className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                    className="px-2 py-1 bg-blue-100 text-blue-600 rounded-md hover:bg-blue-200 transition"
                   >
                     +
                   </button>
-                  <div className="ml-4 text-right">
+                  <div className="ml-4 text-right min-w-[90px]">
                     {item.discountValue && item.discountValue !== 0 ? (
                       <>
                         <p className="text-gray-400 line-through text-sm">
                           {(item.unitPrice * item.quantity).toLocaleString()}₫
                         </p>
-                        <p className="font-semibold">
+                        <p className="font-semibold text-blue-700">
                           {(
                             item.finalPrice || item.unitPrice * item.quantity
                           ).toLocaleString()}
@@ -202,7 +211,7 @@ function CartDropdown({ store, onCartChange }) {
                         </p>
                       </>
                     ) : (
-                      <p className="font-semibold">
+                      <p className="font-semibold text-blue-700">
                         {(
                           item.finalPrice || item.unitPrice * item.quantity
                         ).toLocaleString()}
@@ -212,52 +221,30 @@ function CartDropdown({ store, onCartChange }) {
                   </div>
                   <button
                     onClick={() => removeItem(item._id)}
-                    className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                    className="flex items-center gap-1 px-3 py-1.5 bg-red-50 text-red-600 border border-red-300 rounded-md 
+             hover:bg-red-100 hover:text-red-700 transition-all duration-200 shadow-sm"
                   >
-                    Xóa
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={2}
+                      stroke="currentColor"
+                      className="w-4 h-4"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M6 7h12M9 7V4h6v3m2 0v13a2 2 0 01-2 2H8a2 2 0 01-2-2V7z"
+                      />
+                    </svg>
+                    <span className="font-medium text-sm">Xóa</span>
                   </button>
                 </div>
               </div>
             ))}
           </div>
         )}
-        {/* {isOpen && items.some((item) => item.is_chosen) && (
-          <div
-            className="mt-2 p-3 border rounded bg-yellow-50 cursor-pointer hover:bg-yellow-100"
-            onClick={() => setShowPromotionModal(true)}
-          >
-            <p className="font-medium text-yellow-700">
-              Áp dụng khuyến mãi: {store.promotion?.name} -{" "}
-              {store.promotion?.description}
-            </p>
-          </div>
-        )} */}
-
-        {/* {showPromotionModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded shadow-lg w-96">
-              <h2 className="text-xl font-semibold mb-4">Chọn khuyến mãi</h2>
-              {/* Ví dụ danh sách promotion */}
-              {/* <ul className="space-y-2">
-                {availablePromotions.map((promo) => (
-                  <li
-                    key={promo._id}
-                    className="p-2 border rounded hover:bg-gray-100 cursor-pointer"
-                    onClick={() => handleSelectPromotion(promo)}
-                  >
-                    {promo.name} - {promo.description}
-                  </li>
-                ))}
-              </ul>
-              <button
-                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-                onClick={() => setShowPromotionModal(false)}
-              >
-                Đóng
-              </button>
-            </div>
-          </div>
-        )} */} 
       </div>
     </>
   );

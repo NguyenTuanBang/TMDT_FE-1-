@@ -16,7 +16,7 @@ import useStores from "../hooks/useStore";
 import useProducts from "../hooks/useProduct";
 
 export default function AdminDashboard() {
-  const [filters, setFilters] = useState({
+  const [filters] = useState({
     search: "",
     role: "",
     isActive: "",
@@ -346,7 +346,7 @@ export default function AdminDashboard() {
                       </div>
                       <div
                         className={`text-xs mt-1 ${
-                          o.status === "Hoàn tất"
+                          o.status === "Successful"
                             ? "text-green-600"
                             : o.status === "Pending"
                             ? "text-yellow-600"
@@ -357,7 +357,7 @@ export default function AdminDashboard() {
                           ? "Đang xử lý"
                           : o.status === "Cancelled"
                           ? "Đã hủy"
-                          : "Thành công"}
+                          : "Đã giao"}
                       </div>
                     </div>
                   </li>
